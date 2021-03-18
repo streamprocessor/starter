@@ -10,8 +10,8 @@ steps:
     export PULUMI_CONFIG_PASSPHRASE=""
     yarn install
     pulumi login --local
-    pulumi stack init ${PROJECT_ID}-infra
-    pulumi stack select ${PROJECT_ID}-infra
+    pulumi stack init ${PROJECT_ID}-setup
+    pulumi stack select ${PROJECT_ID}-setup
     pulumi config set gcp:project ${PROJECT_ID}
     pulumi config set gcp:region ${_GOOGLE_REGION}
     pulumi config set gcp:zone ${_GOOGLE_ZONE}

@@ -72,7 +72,7 @@ gcloud projects remove-iam-policy-binding $PROJECT_ID \
 
 ### 2.3 Get access to StreamProcessor artifacts
 
-[Fill in the alpha access request form](https://forms.gle/A9Xu3fV5kYs1j3KC7) to get permission to use the ready made docker images.
+[Fill in the alpha access request form](https://forms.gle/A9Xu3fV5kYs1j3KC7) to get permission to use the ready made docker images. This step is required for the starter kit to work.
 
 ### 2.4 Shared infrastructure
 This step creates infrastructure that is shared across the pipelines, i.e. staging buckets, schema registry, etc.

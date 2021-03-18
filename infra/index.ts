@@ -8,73 +8,26 @@ const projectId = gcpConfig.require("project");
 /*
 * Create a GCP Storage Bucket and export the DNS name
 */
-const stateBucket = new gcp.storage.Bucket(
-    projectId + "-state",
+
+const schemasBucket = new gcp.storage.Bucket(
+    projectId + "-schemas",
     {
-        name: projectId + "-state",
+        name: projectId + "-schemas",
         location: gcpConfig.require("region")
     }
 );
-export const stateBucketName = stateBucket.url;
+export const schemasBucketName = schemasBucket.url;
 
-/*
-* Enable API:s
-*/
-const secretManagerApi = new gcp.projects.Service(
-    "secretManagerApi", 
+const stagingBucket = new gcp.storage.Bucket(
+    projectId + "-staging",
     {
-        service: "secretmanager.googleapis.com"
+        name: projectId + "-staging",
+        location: gcpConfig.require("region")
     }
 );
+export const stagingBucketName = stagingBucket.url;
 
-const cloudBuildApi = new gcp.projects.Service(
-    "cloudBuildApi", 
-    {
-        service: "cloudbuild.googleapis.com"
-    }
-);
 
-new gcp.projects.Service(
-    "cloudRunApi",
-    {
-        service: "run.googleapis.com"
-    }
-);
-
-new gcp.projects.Service(
-    "cloudfunctionsApi", 
-    {
-        service: "cloudfunctions.googleapis.com"
-    }
-);
-
-const cloudKmsApi = new gcp.projects.Service(
-    "cloudKmsApi", 
-    {
-        service: "cloudkms.googleapis.com"
-    }
-);
-
-new gcp.projects.Service(
-    "dataflowApi", 
-    {
-        service: "dataflow.googleapis.com"
-    }
-);
-
-new gcp.projects.Service(
-    "pubsubApi", 
-    {
-        service: "pubsub.googleapis.com"
-    }
-);
-
-new gcp.projects.Service(
-    "enable-cloud-resource-manager", 
-    {
-        service: "cloudresourcemanager.googleapis.com"
-    }
-);
 
 /*
 * Iam members
@@ -82,26 +35,19 @@ new gcp.projects.Service(
 
 const cloudBuildIamMember = gcp.organizations
     .getProject({projectId: projectId})
-    .then((projectResult: { number: string; }) => {return "serviceAccount:"+ projectResult.number + "@cloudbuild.gserviceaccount.com"});
+    .then(projectResult => {return "serviceAccount:"+ projectResult.number + "@cloudbuild.gserviceaccount.com"});
 
 const cloudBuildAgentIamMember = gcp.organizations
     .getProject({projectId: projectId})
-    .then((projectResult: { number: string; }) => {return "serviceAccount:service-"+ projectResult.number + "@gcp-sa-cloudbuild.iam.gserviceaccount.com"});
+    .then(projectResult => {return "serviceAccount:service-"+ projectResult.number + "@gcp-sa-cloudbuild.iam.gserviceaccount.com"});
 
-const streamProcessorServiceAccount = new gcp.serviceaccount.Account(
-    "streamProcessorServiceAccount",
-    {
-        accountId: "streamprocessor",
-        description:"The service account used by StreamProcessor services",
-        displayName:"StreamProcessor service account"
-    }
-);
+const pubsubServiceAgentIamMember = gcp.organizations
+    .getProject({projectId: projectId})
+    .then(projectResult => {return "serviceAccount:service-"+ projectResult.number + "@gcp-sa-pubsub.iam.gserviceaccount.com"});
 
-export const streamProcessorServiceAccountEmail = streamProcessorServiceAccount.email;
-
-/*
-* Bind roles on project level
-*/
+const computeEngineIamMember = gcp.organizations
+    .getProject({projectId: projectId})
+    .then(projectResult => {return "serviceAccount:"+ projectResult.number + "-compute@developer.gserviceaccount.com"});
 
 /*
 const projectIamBindingEditor = new gcp.projects.IAMBinding(
@@ -118,9 +64,41 @@ const projectIamBindingEditor = new gcp.projects.IAMBinding(
             cloudBuildApi
         ]
     }
+);*/
+
+const projectIamBindingDataflowAdmin = new gcp.projects.IAMBinding(
+    "projectIamBindingDataflowAdmin", 
+    {
+        role: "roles/dataflow.admin",
+        project: projectId,
+        members: [
+            cloudBuildIamMember
+        ]
+    }
 );
 
-*/
+const projectIamBindingCloudFunctionsDeveloper = new gcp.projects.IAMBinding(
+    "projectIamBindingCloudFunctionsDeveloper", 
+    {
+        role: "roles/cloudfunctions.developer",
+        project: projectId,
+        members: [
+            cloudBuildIamMember
+        ]
+    }
+);
+
+const projectIamBindingRunAdmin = new gcp.projects.IAMBinding(
+    "projectIamBindingRunAdmin", 
+    {
+        role: "roles/run.admin",
+        project: projectId,
+        members: [
+            cloudBuildIamMember, 
+            pulumi.interpolate`serviceAccount:${streamProcessorServiceAccountEmail}`
+        ]
+    }
+);
 
 const projectIamBindingIamServiceAccountUser = new gcp.projects.IAMBinding(
     "projectIamBindingIamServiceAccountUser", 
@@ -130,11 +108,6 @@ const projectIamBindingIamServiceAccountUser = new gcp.projects.IAMBinding(
         members: [
             cloudBuildIamMember,
             pulumi.interpolate`serviceAccount:${streamProcessorServiceAccountEmail}`
-        ]
-    },
-    {
-        dependsOn: [
-            cloudBuildApi
         ]
     }
 );
@@ -149,12 +122,6 @@ const projectIamBindingCloudkmsCryptoKeyEncrypterDecrypter = new gcp.projects.IA
             cloudBuildAgentIamMember,
             pulumi.interpolate`serviceAccount:${streamProcessorServiceAccountEmail}`
         ]
-    },
-    {
-        dependsOn:[
-            cloudBuildApi,
-            cloudKmsApi
-        ]
     }
 );
 
@@ -166,15 +133,9 @@ const projectIamBindingSecretmanagerSecretAccessor = new gcp.projects.IAMBinding
         members: [
             cloudBuildIamMember
         ]
-    },
-    {
-        dependsOn: [
-            cloudBuildApi
-        ]
     }
 );
 
-/*
 const projectIamBindingCloudfunctionsAdmin = new gcp.projects.IAMBinding(
     "projectIamBindingCloudfunctionsAdmin", 
     {    
@@ -227,13 +188,8 @@ const projectIamBindingIamServiceAccountTokenCreator = new gcp.projects.IAMBindi
         members: [
             pubsubServiceAgentIamMember
         ]
-    },
-    {
-        dependsOn: [
-            pubsubApi
-        ]
     }
-);*/
+);
 
 const streamProcessorServiceAccountKey = new gcp.serviceaccount.Key(
     "streamProcessorServiceAccountKey", 
@@ -253,11 +209,6 @@ const streamProcessorServiceAccountSecret = new gcp.secretmanager.Secret(
                 ]
             }
         }
-    },
-    {
-        dependsOn:[
-            secretManagerApi
-        ]
     }
 );
 
@@ -266,12 +217,11 @@ const streamProcessorServiceAccountSecretVersion = new gcp.secretmanager.SecretV
     {
         secret: streamProcessorServiceAccountSecret.name,
         secretData: streamProcessorServiceAccountKey.privateKey.apply(
-            (privateKey: any) => Buffer.from(privateKey, 'base64').toString('ascii')
+            privateKey => Buffer.from(privateKey, 'base64').toString('ascii')
         )
     },
     {
-        dependsOn:[
-            secretManagerApi, 
+        dependsOn:[ 
             streamProcessorServiceAccountSecret
         ]
     }
@@ -285,11 +235,6 @@ const streamProcessorKmsKeyRing = new gcp.kms.KeyRing(
         name: "streamprocessor",
         location: "global",
         project: projectId
-    }, 
-    {
-        dependsOn:[
-            cloudKmsApi
-        ]
     }
 );
 
