@@ -1,0 +1,22 @@
+# gcloud builds submit --config=./com.google.analytics.v1/cloudbuild.yaml .
+steps:
+- id: 'Preview Google analytics streams'
+  name: 'gcr.io/cloud-builders/gcloud'
+  args: [
+  'builds',
+  'submit',
+  '.',
+  '--config=cloudbuild.yaml',
+  '--substitutions=_STACK=com-google-analytics-v1,_BUILD_TYPE=preview,_WORKING_DIRECTORY=./com.google.analytics.v1'
+  ]
+- id: 'Deploy Google analytics streams'
+  name: 'gcr.io/cloud-builders/gcloud'
+  waitFor: ['Preview Google analytics streams']
+  args: [
+  'builds',
+  'submit',
+  '.',
+  '--config=cloudbuild.yaml',
+  '--substitutions=_STACK=com-google-analytics-v1,_BUILD_TYPE=up,_WORKING_DIRECTORY=./com.google.analytics.v1'
+  ]
+tags: ['streamprocessor-builder-com-google-analytics-v1']

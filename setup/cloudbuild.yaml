@@ -1,0 +1,23 @@
+# gcloud builds submit --config=cloudbuild.yaml .
+steps:
+- name: 'gcr.io/cloud-builders/nodejs/yarn:latest'
+  entrypoint: /bin/sh
+  args:
+  - '-c'
+  - |
+    curl -L https://get.pulumi.com/ | bash
+    export PATH=$$PATH:$$HOME/.pulumi/bin
+    export PULUMI_CONFIG_PASSPHRASE=""
+    yarn install
+    pulumi login --local
+    pulumi stack init ${PROJECT_ID}-infra
+    pulumi stack select ${PROJECT_ID}-infra
+    pulumi config set gcp:project ${PROJECT_ID}
+    pulumi config set gcp:region ${_GOOGLE_REGION}
+    pulumi config set gcp:zone ${_GOOGLE_ZONE}
+    pulumi preview
+    #pulumi up
+tags: ['streamprocessor-builder-infra']
+substitutions:
+  _GOOGLE_REGION: 'europe-west1'
+  _GOOGLE_ZONE: 'europe-west1-b'

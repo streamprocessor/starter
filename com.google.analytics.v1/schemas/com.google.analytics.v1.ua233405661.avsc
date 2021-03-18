@@ -1,0 +1,1311 @@
+{
+	"type": "record",
+	"name": "ua233405661",
+	"namespace": "com.google.analytics.v1",
+	"fields": [
+		{
+			"name": "timestamp",
+			"type": [
+				"null",
+				"string"
+			],
+			"doc": "Timestamp as ISO 8601 (YYYY-MM-DDTHH:mm:ss.sssZ), i.e. UTC.",
+			"default": null,
+			"bigQueryType": "TIMESTAMP"
+		},
+		{
+			"name": "version",
+			"type": [
+				"null",
+				"string"
+			],
+			"doc": "The Protocol version.",
+			"default": null
+		},
+		{
+			"name": "clientId",
+			"type": [
+				"null",
+				"string"
+			],
+			"doc": "This pseudonymously identifies a particular user, device, or browser instance. For the web, this is generally stored as a first-party cookie with a two-year expiration. For mobile apps, this is randomly generated for each particular instance of an application install.",
+			"default": null
+		},
+        {
+			"name": "customDimensions",
+			"type": [
+				"null",
+				{
+					"type": "record",
+					"name": "CustomDimensions",
+					"fields": [
+						{
+							"name": "tags",
+							"type": [
+								"null",
+								"string"
+							],
+							"doc": "The blog post's tags",
+							"default": null,
+							"aliases": [
+								"cd1"
+							]
+						},
+						{
+							"name": "clientTimestamp",
+							"type": [
+								"null",
+								"string"
+							],
+							"doc": "The timestamp when the event was created",
+							"default": null,
+							"aliases": [
+								"cd2"
+							],
+							"bigQueryType": "TIMESTAMP"
+						},
+						{
+							"name": "productVariantId",
+							"type": [
+								"null",
+								"string"
+							],
+							"doc": "ID of the current variant.",
+							"default": null,
+							"aliases": [
+								"cd18"
+							]
+						},
+						{
+							"name": "randomInt",
+							"type": [
+								"null",
+								"int"
+							],
+							"doc": "Super secret number",
+							"default": null,
+							"aliases": [
+								"cd3"
+							],
+							"policyTag": "projects/streamprocessor-df-demo/locations/eu/taxonomies/5185345598450259650/policyTags/4168802028629569619"
+						},
+						{
+							"name": "myBoolean",
+							"type": [
+								"null",
+								"boolean"
+							],
+							"doc": "look, it is a boolean",
+							"default": null,
+							"aliases": [
+								"cd4"
+							]
+						},
+						{
+							"name": "myBoolean2",
+							"type": [
+								"null",
+								"boolean"
+							],
+							"doc": "look, it is a boolean2",
+							"default": null,
+							"aliases": [
+								"cd47"
+							]
+						},
+						{
+							"name": "myBoolean3",
+							"type": [
+								"null",
+								"boolean"
+							],
+							"doc": "look, it is a boolean",
+							"default": null,
+							"aliases": [
+								"cd48"
+							]
+						}
+					]
+				}
+			],
+			"default": null
+		},
+		{
+			"name": "customMetrics",
+			"type": [
+				"null",
+				{
+					"type": "record",
+					"name": "CustomMetrics",
+					"fields": [
+						{
+							"name": "randomInt",
+							"type": [
+								"null",
+								"int"
+							],
+							"doc": "Super secret number",
+							"default": null,
+							"aliases": [
+								"cm1"
+							],
+							"policyTag": "projects/streamprocessor-df-demo/locations/eu/taxonomies/5185345598450259650/policyTags/4168802028629569619"
+						}
+					]
+				}
+			],
+			"default": null
+		},        
+		{
+			"name": "userId",
+			"type": [
+				"null",
+				"string"
+			],
+			"doc": "This is intended to be a known identifier for a user provided by the site owner/library user. It must not itself be PII (personally identifiable information).",
+			"default": null
+		},
+		{
+			"name": "hit",
+			"type": [
+				"null",
+				{
+					"type": "record",
+					"name": "Hit",
+					"fields": [
+						{
+							"name": "type",
+							"type": "string",
+							"doc": "The type of hit. Must be one of 'pageview', 'screenview', 'event', 'transaction', 'item', 'social', 'exception', 'timing'."
+						},
+						{
+							"name": "nonInteraction",
+							"type": [
+								"null",
+								"boolean"
+							],
+							"doc": "Specifies that a hit be considered non-interactive.",
+							"default": null
+						},
+						{
+							"name": "dataSource",
+							"type": [
+								"null",
+								"string"
+							],
+							"doc": "Indicates the data source of the hit. Hits sent from analytics.js will have data source set to 'web'; hits sent from one of the mobile SDKs will have data source set to 'app'.",
+							"default": null
+						},
+						{
+							"name": "gtmContainerId",
+							"type": [
+								"null",
+								"string"
+							],
+							"default": null
+						},
+						{
+							"name": "propertyId",
+							"type": "string",
+							"doc": "The measurement ID / web property ID. The format is UA-XXXX-Y."
+						},
+						{
+							"name": "queueTime",
+							"type": [
+								"null",
+								"int"
+							],
+							"default": null
+						},
+						{
+							"name": "disablingAdvertisingPersonalization",
+							"type": [
+								"null",
+								"string"
+							],
+							"doc": "Mark an event as disabled for advertising personalization, including for events from a property with a setting that otherwise permits ads personalization.",
+							"default": null
+						}
+					]
+				}
+			],
+			"doc": "This field is populated for any and all types of hits",
+			"default": null
+		},
+		{
+			"name": "content",
+			"type": [
+				"null",
+				{
+					"type": "record",
+					"name": "Content",
+					"fields": [
+						{
+							"name": "title",
+							"type": [
+								"null",
+								"string"
+							],
+							"doc": "The title of the page / document.",
+							"default": null
+						},
+						{
+							"name": "url",
+							"type": [
+								"null",
+								"string"
+							],
+							"doc": "The full URL (document location) of the page on which content resides.",
+							"default": null
+						},
+						{
+							"name": "hostname",
+							"type": [
+								"null",
+								"string"
+							],
+							"doc": "Specifies the hostname from which content was hosted.",
+							"default": null
+						},
+						{
+							"name": "path",
+							"type": [
+								"null",
+								"string"
+							],
+							"doc": "The path portion of the page URL.",
+							"default": null
+						},
+						{
+							"name": "referer",
+							"type": [
+								"null",
+								"string"
+							],
+							"default": null
+						},
+						{
+							"name": "screenName",
+							"type": [
+								"null",
+								"string"
+							],
+							"default": null
+						},
+						{
+							"name": "linkId",
+							"type": [
+								"null",
+								"string"
+							],
+							"doc": "The ID of a clicked DOM element, used to disambiguate multiple links to the same URL.",
+							"default": null
+						},
+						{
+							"name": "contentGroups",
+							"type": [
+								"null",
+								{
+									"type": "record",
+									"name": "ContentGroups",
+									"namespace": "com.google.analytics.v1.content",
+									"fields": [
+										{
+											"name": "group1",
+											"type": [
+												"null",
+												"string"
+											],
+											"default": null
+										},
+										{
+											"name": "group2",
+											"type": [
+												"null",
+												"string"
+											],
+											"default": null
+										},
+										{
+											"name": "group3",
+											"type": [
+												"null",
+												"string"
+											],
+											"default": null
+										},
+										{
+											"name": "group4",
+											"type": [
+												"null",
+												"string"
+											],
+											"default": null
+										},
+										{
+											"name": "group5",
+											"type": [
+												"null",
+												"string"
+											],
+											"default": null
+										}
+									]
+								}
+							],
+							"default": null
+						}
+					]
+				}
+			],
+			"doc": "This section contains content related fields.",
+			"default": null
+		},
+		{
+			"name": "event",
+			"type": [
+				"null",
+				{
+					"type": "record",
+					"name": "Event",
+					"fields": [
+						{
+							"name": "action",
+							"type": [
+								"null",
+								"string"
+							],
+							"default": null
+						},
+						{
+							"name": "category",
+							"type": [
+								"null",
+								"string"
+							],
+							"default": null
+						},
+						{
+							"name": "label",
+							"type": [
+								"null",
+								"string"
+							],
+							"default": null
+						},
+						{
+							"name": "value",
+							"type": [
+								"null",
+								"int"
+							],
+							"default": null
+						}
+					]
+				}
+			],
+			"doc": "This section is populated for each hit with type.",
+			"default": null
+		},
+		{
+			"name": "device",
+			"type": [
+				"null",
+				{
+					"type": "record",
+					"name": "Device",
+					"fields": [
+						{
+							"name": "userAgent",
+							"type": [
+								"null",
+								"string"
+							],
+							"default": null
+						},
+						{
+							"name": "browser",
+							"type": [
+								"null",
+								{
+									"type": "record",
+									"name": "Browser",
+									"namespace": "com.google.analytics.v1.device",
+									"fields": [
+										{
+											"name": "flashVersion",
+											"type": [
+												"null",
+												"string"
+											],
+											"default": null
+										},
+										{
+											"name": "javaEnabled",
+											"type": [
+												"null",
+												"boolean"
+											],
+											"default": null
+										}
+									]
+								}
+							],
+							"default": null
+						},
+						{
+							"name": "screen",
+							"type": [
+								"null",
+								{
+									"type": "record",
+									"name": "Screen",
+									"namespace": "com.google.analytics.v1.device",
+									"fields": [
+										{
+											"name": "colors",
+											"type": [
+												"null",
+												"string"
+											],
+											"default": null
+										},
+										{
+											"name": "resolution",
+											"type": [
+												"null",
+												"string"
+											],
+											"default": null
+										}
+									]
+								}
+							],
+							"default": null
+						}
+					]
+				}
+			],
+			"doc": "This section contains information about the user devices.",
+			"default": null
+		},
+		{
+			"name": "geo",
+			"type": [
+				"null",
+				{
+					"type": "record",
+					"name": "Geo",
+					"fields": [
+						{
+							"name": "country",
+							"type": [
+								"null",
+								"string"
+							],
+							"default": null
+						},
+						{
+							"name": "region",
+							"type": [
+								"null",
+								"string"
+							],
+							"default": null
+						},
+						{
+							"name": "city",
+							"type": [
+								"null",
+								"string"
+							],
+							"default": null
+						},
+						{
+							"name": "latitude",
+							"type": [
+								"null",
+								"double"
+							],
+							"default": null
+						},
+						{
+							"name": "longitude",
+							"type": [
+								"null",
+								"double"
+							],
+							"default": null
+						},
+						{
+							"name": "geoId",
+							"type": [
+								"null",
+								"string"
+							],
+							"default": null
+						}
+					]
+				}
+			],
+			"doc": "The geographical location of the user.",
+			"default": null
+		},
+		{
+			"name": "experiment",
+			"type": [
+				"null",
+				{
+					"type": "record",
+					"name": "Experiment",
+					"fields": [
+						{
+							"name": "id",
+							"type": [
+								"null",
+								"string"
+							],
+							"default": null
+						},
+						{
+							"name": "variant",
+							"type": [
+								"null",
+								"string"
+							],
+							"default": null
+						}
+					]
+				}
+			],
+			"default": null
+		},
+		{
+			"name": "exception",
+			"type": [
+				"null",
+				{
+					"type": "record",
+					"name": "Exception",
+					"fields": [
+						{
+							"name": "description",
+							"type": [
+								"null",
+								"string"
+							],
+							"default": null
+						},
+						{
+							"name": "fatal",
+							"type": [
+								"null",
+								"boolean"
+							],
+							"default": null
+						}
+					]
+				}
+			],
+			"default": null
+		},
+		{
+			"name": "latency",
+			"type": [
+				"null",
+				{
+					"type": "record",
+					"name": "Latency",
+					"fields": [
+						{
+							"name": "timing",
+							"type": [
+								"null",
+								{
+									"type": "record",
+									"name": "Timing",
+									"namespace": "com.google.analytics.v1.latency",
+									"fields": [
+										{
+											"name": "category",
+											"type": [
+												"null",
+												"string"
+											],
+											"default": null
+										},
+										{
+											"name": "label",
+											"type": [
+												"null",
+												"string"
+											],
+											"default": null
+										},
+										{
+											"name": "variable",
+											"type": [
+												"null",
+												"string"
+											],
+											"default": null
+										},
+										{
+											"name": "time",
+											"type": [
+												"null",
+												"int"
+											],
+											"default": null
+										}
+									]
+								}
+							],
+							"default": null
+						},
+						{
+							"name": "domainLookupTime",
+							"type": [
+								"null",
+								"int"
+							],
+							"default": null
+						},
+						{
+							"name": "domContentLoadedTime",
+							"type": [
+								"null",
+								"int"
+							],
+							"default": null
+						},
+						{
+							"name": "domInteractiveTime",
+							"type": [
+								"null",
+								"int"
+							],
+							"default": null
+						},
+						{
+							"name": "pageDownloadTime",
+							"type": [
+								"null",
+								"int"
+							],
+							"default": null
+						},
+						{
+							"name": "pageLoadTime",
+							"type": [
+								"null",
+								"int"
+							],
+							"default": null
+						},
+						{
+							"name": "redirectionTime",
+							"type": [
+								"null",
+								"int"
+							],
+							"default": null
+						},
+						{
+							"name": "serverConnectionTime",
+							"type": [
+								"null",
+								"int"
+							],
+							"default": null
+						},
+						{
+							"name": "serverResponseTime",
+							"type": [
+								"null",
+								"int"
+							],
+							"default": null
+						}
+					]
+				}
+			],
+			"default": null
+		},
+		{
+			"name": "social",
+			"type": [
+				"null",
+				{
+					"type": "record",
+					"name": "Social",
+					"fields": [
+						{
+							"name": "network",
+							"type": [
+								"null",
+								"string"
+							],
+							"default": null
+						},
+						{
+							"name": "action",
+							"type": [
+								"null",
+								"string"
+							],
+							"default": null
+						},
+						{
+							"name": "target",
+							"type": [
+								"null",
+								"string"
+							],
+							"default": null
+						}
+					]
+				}
+			],
+			"default": null
+		},
+		{
+			"name": "trafficSource",
+			"type": [
+				"null",
+				{
+					"type": "record",
+					"name": "TrafficSource",
+					"fields": [
+						{
+							"name": "utmId",
+							"type": [
+								"null",
+								"string"
+							],
+							"doc": "(utm_id) used to import the Medium and Source offline with data import.",
+							"default": null
+						},
+						{
+							"name": "utmContent",
+							"type": [
+								"null",
+								"string"
+							],
+							"doc": "(utm_content) Used to differentiate similar content, or links within the same ad.",
+							"default": null
+						},
+						{
+							"name": "utmTerm",
+							"type": [
+								"null",
+								"string"
+							],
+							"doc": "(utm_terms) Identify paid search keywords.",
+							"default": null
+						},
+						{
+							"name": "utmCampaign",
+							"type": [
+								"null",
+								"string"
+							],
+							"doc": "(utm_campaign) The individual campaign name, slogan, promo code, etc. for a product.",
+							"default": null
+						},
+						{
+							"name": "utmMedium",
+							"type": [
+								"null",
+								"string"
+							],
+							"doc": "(utm_medium) The advertising or marketing medium.",
+							"default": null
+						},
+						{
+							"name": "utmSource",
+							"type": [
+								"null",
+								"string"
+							],
+							"doc": "(utm_source) Identify the advertiser, site, publication, etc. that is sending traffic to your property.",
+							"default": null
+						},
+						{
+							"name": "campaignId",
+							"type": [
+								"null",
+								"string"
+							],
+							"doc": "(ci) Specifies the campaign ID.",
+							"default": null
+						},
+						{
+							"name": "campaignName",
+							"type": [
+								"null",
+								"string"
+							],
+							"doc": "(cn) Specifies the campaign name.",
+							"default": null
+						},
+						{
+							"name": "campaignContent",
+							"type": [
+								"null",
+								"string"
+							],
+							"doc": "(cc) Specifies the campaign content.",
+							"default": null
+						},
+						{
+							"name": "campaignMedium",
+							"type": [
+								"null",
+								"string"
+							],
+							"doc": "(cm) Specifies the campaign medium.",
+							"default": null
+						},
+						{
+							"name": "campaignSource",
+							"type": [
+								"null",
+								"string"
+							],
+							"doc": "(cs) Specifies the campaign source.",
+							"default": null
+						},
+						{
+							"name": "campaignKeyword",
+							"type": [
+								"null",
+								"string"
+							],
+							"doc": "(ck) Specifies the campaign keyword.",
+							"default": null
+						},
+						{
+							"name": "gclid",
+							"type": [
+								"null",
+								"string"
+							],
+							"doc": "(gclid) Specifies the Google Ad Id.",
+							"default": null
+						},
+						{
+							"name": "dclid",
+							"type": [
+								"null",
+								"string"
+							],
+							"doc": "(dclid) Specifies the Google Display Ads Id.",
+							"default": null
+						},
+						{
+							"name": "referer",
+							"type": [
+								"null",
+								"string"
+							],
+							"doc": " (dr) Specifies which referral source brought traffic to a website. This value is also used to compute the traffic source.",
+							"default": null
+						}
+					]
+				}
+			],
+			"default": null
+		},
+		{
+			"name": "app",
+			"type": [
+				"null",
+				{
+					"type": "record",
+					"name": "App",
+					"fields": [
+						{
+							"name": "name",
+							"type": [
+								"null",
+								"string"
+							],
+							"default": null
+						},
+						{
+							"name": "id",
+							"type": [
+								"null",
+								"string"
+							],
+							"default": null
+						},
+						{
+							"name": "version",
+							"type": [
+								"null",
+								"string"
+							],
+							"default": null
+						},
+						{
+							"name": "installerId",
+							"type": [
+								"null",
+								"string"
+							],
+							"default": null
+						}
+					]
+				}
+			],
+			"default": null
+		},
+		{
+			"name": "ecommerce",
+			"type": [
+				"null",
+				{
+					"type": "record",
+					"name": "Ecommerce",
+					"fields": [
+						{
+							"name": "action",
+							"type": [
+								"null",
+								"string"
+							],
+							"default": null
+						},
+						{
+							"name": "products",
+							"type": {
+								"type": "array",
+								"items": {
+									"type": "record",
+									"name": "Product",
+									"namespace": "com.google.analytics.v1.ecommerce",
+									"fields": [
+										{
+											"name": "sku",
+											"type": [
+												"null",
+												"string"
+											],
+											"default": null
+										},
+										{
+											"name": "action",
+											"type": [
+												"null",
+												"string"
+											],
+											"default": null
+										},
+										{
+											"name": "brand",
+											"type": [
+												"null",
+												"string"
+											],
+											"default": null
+										},
+										{
+											"name": "category",
+											"type": [
+												"null",
+												"string"
+											],
+											"default": null
+										},
+										{
+											"name": "couponCode",
+											"type": [
+												"null",
+												"string"
+											],
+											"default": null
+										},
+										{
+											"name": "price",
+											"type": [
+												"null",
+												"double"
+											],
+											"default": null
+										},
+										{
+											"name": "quantity",
+											"type": [
+												"null",
+												"double"
+											],
+											"default": null
+										},
+										{
+											"name": "list",
+											"type": [
+												"null",
+												"string"
+											],
+											"default": null
+										},
+										{
+											"name": "name",
+											"type": [
+												"null",
+												"string"
+											],
+											"default": null
+										},
+										{
+											"name": "position",
+											"type": [
+												"null",
+												"int"
+											],
+											"default": null
+										},
+										{
+											"name": "variant",
+											"type": [
+												"null",
+												"string"
+											],
+											"default": null
+										},
+										{
+											"name": "customDimensions",
+											"type": [
+												"null",
+												{
+													"type": "record",
+													"name": "CustomDimensions",
+													"namespace": "com.google.analytics.v1.ecommerce.product",
+													"fields": [
+														{
+															"name": "color",
+															"type": [
+																"null",
+																"string"
+															],
+															"default": null,
+															"aliases": [
+																"cd1"
+															]
+														}
+													]
+												}
+											],
+											"default": null
+										},
+										{
+											"name": "customMetrics",
+											"type": [
+												"null",
+												{
+													"type": "record",
+													"name": "CustomMetrics",
+													"namespace": "com.google.analytics.v1.ecommerce.product",
+													"fields": [
+														{
+															"name": "amount",
+															"type": [
+																"null",
+																"int"
+															],
+															"default": null,
+															"aliases": [
+																"cm1"
+															]
+														},
+														{
+															"name": "size",
+															"type": [
+																"null",
+																"float"
+															],
+															"default": null,
+															"aliases": [
+																"cm2"
+															]
+														}
+													]
+												}
+											],
+											"default": null
+										}
+									]
+								}
+							}
+						},
+						{
+							"name": "promotions",
+							"type": {
+								"type": "array",
+								"items": {
+									"type": "record",
+									"name": "Promotion",
+									"namespace": "com.google.analytics.v1.ecommerce",
+									"fields": [
+										{
+											"name": "id",
+											"type": [
+												"null",
+												"string"
+											],
+											"default": null
+										},
+										{
+											"name": "action",
+											"type": [
+												"null",
+												"string"
+											],
+											"default": null
+										},
+										{
+											"name": "name",
+											"type": [
+												"null",
+												"string"
+											],
+											"default": null
+										},
+										{
+											"name": "position",
+											"type": [
+												"null",
+												"string"
+											],
+											"default": null
+										},
+										{
+											"name": "creative",
+											"type": [
+												"null",
+												"string"
+											],
+											"default": null
+										}
+									]
+								}
+							}
+						},
+						{
+							"name": "transaction",
+							"type": [
+								"null",
+								{
+									"type": "record",
+									"name": "Transaction",
+									"namespace": "com.google.analytics.v1.ecommerce",
+									"fields": [
+										{
+											"name": "id",
+											"type": [
+												"null",
+												"string"
+											],
+											"default": null
+										},
+										{
+											"name": "revenue",
+											"type": [
+												"null",
+												"double"
+											],
+											"default": null
+										},
+										{
+											"name": "tax",
+											"type": [
+												"null",
+												"double"
+											],
+											"default": null
+										},
+										{
+											"name": "shipping",
+											"type": [
+												"null",
+												"double"
+											],
+											"default": null
+										},
+										{
+											"name": "affiliation",
+											"type": [
+												"null",
+												"string"
+											],
+											"default": null
+										},
+										{
+											"name": "currency",
+											"type": [
+												"null",
+												"string"
+											],
+											"default": null
+										},
+										{
+											"name": "coupon",
+											"type": [
+												"null",
+												"string"
+											],
+											"default": null
+										},
+										{
+											"name": "refund",
+											"type": [
+												"null",
+												"boolean"
+											],
+											"default": null
+										}
+									],
+									"isRegistryStream": "false"
+								}
+							],
+							"default": null
+						},
+						{
+							"name": "checkout",
+							"type": [
+								"null",
+								{
+									"type": "record",
+									"name": "Checkout",
+									"namespace": "com.google.analytics.v1.ecommerce",
+									"fields": [
+										{
+											"name": "step",
+											"type": [
+												"null",
+												"int"
+											],
+											"default": null
+										},
+										{
+											"name": "option",
+											"type": [
+												"null",
+												"string"
+											],
+											"default": null
+										}
+									]
+								}
+							],
+							"default": null
+						}
+					]
+				}
+			],
+			"default": null
+		}
+	]
+}
