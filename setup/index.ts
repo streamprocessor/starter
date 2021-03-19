@@ -13,6 +13,9 @@ const stateBucket = new gcp.storage.Bucket(
     {
         name: projectId + "-state",
         location: gcpConfig.require("region")
+    },
+    {
+        //import: projectId + "-state"
     }
 );
 export const stateBucketName = stateBucket.url;
@@ -94,6 +97,9 @@ const streamProcessorServiceAccount = new gcp.serviceaccount.Account(
         accountId: "streamprocessor",
         description:"The service account used by StreamProcessor services",
         displayName:"StreamProcessor service account"
+    },
+    {
+        //import:"streamprocessor"
     }
 );
 
@@ -289,7 +295,8 @@ const streamProcessorKmsKeyRing = new gcp.kms.KeyRing(
     {
         dependsOn:[
             cloudKmsApi
-        ]
+        ],
+        //import: "projects/streamprocessor-starter-demo/locations/global/keyRings/streamprocessor"
     }
 );
 

@@ -8,23 +8,26 @@ If you find any bugs or issues in the starter kit, please [report the bug/issue 
 ## 1. Private copy of the starter repository
 Follow the steps to get a private copy of the public starter repository, while being able to sync changes from the original starter repository.
 
-1. Create your own private [repository on GitHub](https://docs.github.com/en/articles/creating-a-new-repository), ex. https://github.com/exampleuser/streamprocessor.git
+1. Create your own private streamprocessor [repository on GitHub](https://docs.github.com/en/articles/creating-a-new-repository)  (https://github.com/[USER]/streamprocessor.git)
 2. Open [cloud console](https://ide.cloud.google.com) and run:
- 
+
 ```bash
+# Replace USER
+PRIVATE_REPO=https://github.com/USER/streamprocessor.git
+
 # Clone the public starter repository
 git clone --bare https://github.com/streamprocessor/starter.git
 
 # Mirror-push to the new repository.
 cd starter.git
-git push --mirror https://github.com/exampleuser/streamprocessor.git
+git push --mirror ${PRIVATE_REPO}
 
 # Remove the temporary local repository you created earlier.
 cd ..
 rm -rf starter.git
 
 # Clone the private repo so you can work on it.
-git clone https://github.com/exampleuser/streamprocessor.git
+git clone ${PRIVATE_REPO}
 cd streamprocessor
 
 # Add a remote to the public starter repo to pull changes if needed.
@@ -50,23 +53,7 @@ This step enables API:s, binds roles to service accounts.
 ```bash
 # Replace [PROJECT_ID] with your GCP project's ID
 gcloud config set project [PROJECT_ID]
-
-PROJECT_ID=$(gcloud config get-value project)
-PROJECT_NUMBER=$(gcloud projects describe $PROJECT_ID --format="value(projectNumber)")
-CLOUD_BUILD_SERVICE_ACCOUNT=${PROJECT_NUMBER}@cloudbuild.gserviceaccount.com
-
-# Temporarily grant the cloud build service account the project admin role.
-gcloud projects add-iam-policy-binding $PROJECT_ID \
-    --member="serviceAccount:$CLOUD_BUILD_SERVICE_ACCOUNT" \
-    --role="roles/admin"
-
-# Run the setup build
-gcloud builds submit --config=./infra/cloudbuild.yaml ./infra
-
-# Revoke the project admin role from cloud build service account
-gcloud projects remove-iam-policy-binding $PROJECT_ID \
-    --member="serviceAccount:$CLOUD_BUILD_SERVICE_ACCOUNT" \
-    --role="roles/admin"
+./setup/setup.sh # Enables required API:s and IAM:s
 ```
 
 
@@ -77,6 +64,9 @@ gcloud projects remove-iam-policy-binding $PROJECT_ID \
 ### 2.4 Shared infrastructure
 This step creates infrastructure that is shared across the pipelines, i.e. staging buckets, schema registry, etc.
 
+```bash
+gcloud builds submit --config=./infra/cloudbuild.yaml .
+```
 
 
 ---
@@ -115,8 +105,8 @@ To update your private repo with the latest changes in the public starter reposi
 
 ```bash
 # first make sure working directory is streamprocessor (cd streamprocessor)
-git pull public master # Creates a merge commit
-git push origin master
+git pull public main # Creates a merge commit
+git push origin main
 ```
 
 

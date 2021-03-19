@@ -15,8 +15,8 @@ steps:
     pulumi config set gcp:project ${PROJECT_ID}
     pulumi config set gcp:region ${_GOOGLE_REGION}
     pulumi config set gcp:zone ${_GOOGLE_ZONE}
-    pulumi preview
-    #pulumi up
+    #pulumi preview
+    pulumi up --yes
 tags: ['streamprocessor-builder-infra']
 substitutions:
   _GOOGLE_REGION: 'europe-west1'
