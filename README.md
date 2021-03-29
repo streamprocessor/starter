@@ -13,7 +13,8 @@ Follow the steps to get a private copy of the public starter repository, while b
 
 ```bash
 # Replace USER
-PRIVATE_REPO=https://github.com/USER/streamprocessor.git
+USER=[MY_GITHUB_USER_OR_ORG]
+PRIVATE_REPO=https://github.com/${USER}/streamprocessor.git
 
 # Clone the public starter repository
 git clone --bare https://github.com/streamprocessor/starter.git
