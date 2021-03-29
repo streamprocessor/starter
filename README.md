@@ -1,15 +1,15 @@
 # StreamProcessor starter kit
 This repository contains everything you need to get started with StreamProcessor. The GitOps mode (preferred) of StreamProcessor requires some basic knowledge in git (clone, commit, push, pull, checkout) but that will give you versioning, reproducability, collaboration, and much more.
 
-If you find any bugs or issues in the starter kit, please [report the bug/issue here.](https://github.com/streamprocessor/starter/issues). There is also a support channel in the StreamProcessor slack community.
+If you find any bugs or issues in the starter kit, please <a href="https://github.com/streamprocessor/starter/issues" target="_blank">report the bug/issue here.</a>. There is also a support channel in the StreamProcessor slack community.
 
 ---
 
 ## 1. Private copy of the starter repository
 Follow the steps to get a private copy of the public starter repository, while being able to sync changes from the original starter repository.
 
-1. Create your own private streamprocessor [repository on GitHub](https://docs.github.com/en/articles/creating-a-new-repository)  (https://github.com/[USER]/streamprocessor.git)
-2. Open [cloud console](https://ide.cloud.google.com) and run:
+1. Create your own private streamprocessor <a href="https://docs.github.com/en/articles/creating-a-new-repository" target="_blank">registry on GitHub</a>, i.e. something like https://github.com/[USER]/streamprocessor.git
+2. <a href="https://ide.cloud.google.com" target="_blank">Open cloud shell</a> and run:
 
 ```bash
 # Replace USER
