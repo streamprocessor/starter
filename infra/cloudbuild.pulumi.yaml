@@ -1,0 +1,31 @@
+# gcloud builds submit --config=./com.google.analytics.v1/cloudbuild.pulumi.yaml .
+# gcloud builds submit --config=./com.google.analytics.v1/cloudbuild.pulumi.yaml . --substitutions=_BUILD_TYPE=up
+steps:
+- name: 'gcr.io/cloud-builders/nodejs/yarn:latest'
+  entrypoint: /bin/sh
+  args:
+  - '-c'
+  - './pulumi.sh'
+  env:
+  - 'BUILD_TYPE=$_BUILD_TYPE'
+  - 'STACK=$_STACK'
+  - 'GOOGLE_PROJECT=$PROJECT_ID'
+  - 'GOOGLE_REGION=$_GOOGLE_REGION'
+  - 'GOOGLE_ZONE=$_GOOGLE_ZONE'
+  - 'GOOGLE_KEY_RING=$_GOOGLE_KEY_RING'
+  - 'GOOGLE_CRYPTO_KEY=$_GOOGLE_CRYPTO_KEY'
+  - 'WORKING_DIRECTORY=$_WORKING_DIRECTORY'
+  secretEnv: ['GOOGLE_CREDENTIALS']
+availableSecrets:
+  secretManager:
+  - versionName: projects/${PROJECT_ID}/secrets/pulumi-credentials/versions/latest
+    env: 'GOOGLE_CREDENTIALS'
+tags: ['streamprocessor-builder', 'stack-${_STACK}', 'pulumi-${_BUILD_TYPE}']
+substitutions:
+  _STACK: 'infra'
+  _BUILD_TYPE: 'preview'
+  _WORKING_DIRECTORY: './infra'
+  _GOOGLE_REGION: 'europe-west1'
+  _GOOGLE_ZONE: 'europe-west1-b'
+  _GOOGLE_KEY_RING: 'streamprocessor'
+  _GOOGLE_CRYPTO_KEY: 'pulumi'

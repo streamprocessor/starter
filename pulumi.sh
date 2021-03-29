@@ -7,6 +7,7 @@ set -e -x
 # pulumi
 curl -L https://get.pulumi.com/ | bash
 export PATH=$PATH:$HOME/.pulumi/bin
+yarn install
 
 cd $WORKING_DIRECTORY
 
@@ -14,7 +15,8 @@ cd $WORKING_DIRECTORY
 yarn install
 
 # write credentials to file to be used as application credentials.
-echo $GOOGLE_CREDENTIALS > credentials.json
+#echo $GOOGLE_CREDENTIALS >> credentials.json
+cat > credentials.json <<< $GOOGLE_CREDENTIALS
 export GOOGLE_APPLICATION_CREDENTIALS=credentials.json
 export PULUMI_CONFIG_PASSPHRASE=""
 

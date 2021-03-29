@@ -86,8 +86,7 @@
 							"default": null,
 							"aliases": [
 								"cd3"
-							],
-							"policyTag": "projects/streamprocessor-df-demo/locations/eu/taxonomies/5185345598450259650/policyTags/4168802028629569619"
+							]
 						},
 						{
 							"name": "myBoolean",
@@ -95,7 +94,7 @@
 								"null",
 								"boolean"
 							],
-							"doc": "look, it is a boolean",
+							"doc": "look, it is a boolean, OMG!",
 							"default": null,
 							"aliases": [
 								"cd4"
@@ -148,8 +147,7 @@
 							"default": null,
 							"aliases": [
 								"cm1"
-							],
-							"policyTag": "projects/streamprocessor-df-demo/locations/eu/taxonomies/5185345598450259650/policyTags/4168802028629569619"
+							]
 						}
 					]
 				}

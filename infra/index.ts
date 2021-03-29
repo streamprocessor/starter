@@ -1,12 +1,35 @@
+// IMPORT
 import * as pulumi from "@pulumi/pulumi";
 import * as gcp from "@pulumi/gcp";
 
+// PULUMI CONFIG
 const config = new pulumi.Config();
+const serviceAccountName = config.require("serviceAccountName");
 const gcpConfig = new pulumi.Config("gcp");
+const region = gcpConfig.require("region");
 const projectId = gcpConfig.require("project");
 
+
 /*
-* Create a GCP Storage Bucket and export the DNS name
+******** START SETTINGS ********
+*/
+
+// ARTIFACTS
+const artifactRegistryHostname = `${region}-docker.pkg.dev`;
+const registratorVersion = "0.2.1";
+const collectorVersion = "0.2.0";
+
+// VARIABLES
+const bigQueryLocation = "EU"; // <-- set region for BigQuery Dataset
+const collectorApiKeys = "12345"; //comma separated, ex. "123,456"
+const collectorAllowedOrigins = "https://robertsahlin.com"; //comma separated, ex. "https://www.streamprocessor.org"
+
+/*
+********    END SETTINGS ********
+*/
+
+/*
+* START BUCKETS
 */
 
 const schemasBucket = new gcp.storage.Bucket(
@@ -14,6 +37,9 @@ const schemasBucket = new gcp.storage.Bucket(
     {
         name: projectId + "-schemas",
         location: gcpConfig.require("region")
+    },
+    {
+        //import: projectId + "-schemas"
     }
 );
 export const schemasBucketName = schemasBucket.url;
@@ -23,230 +49,247 @@ const stagingBucket = new gcp.storage.Bucket(
     {
         name: projectId + "-staging",
         location: gcpConfig.require("region")
+    },
+    {
+        //import: projectId + "-staging"
     }
 );
 export const stagingBucketName = stagingBucket.url;
 
-
-
 /*
-* Iam members
+******** START DEADLETTERS ********
 */
-
-const cloudBuildIamMember = gcp.organizations
-    .getProject({projectId: projectId})
-    .then(projectResult => {return "serviceAccount:"+ projectResult.number + "@cloudbuild.gserviceaccount.com"});
-
-const cloudBuildAgentIamMember = gcp.organizations
-    .getProject({projectId: projectId})
-    .then(projectResult => {return "serviceAccount:service-"+ projectResult.number + "@gcp-sa-cloudbuild.iam.gserviceaccount.com"});
-
-const pubsubServiceAgentIamMember = gcp.organizations
-    .getProject({projectId: projectId})
-    .then(projectResult => {return "serviceAccount:service-"+ projectResult.number + "@gcp-sa-pubsub.iam.gserviceaccount.com"});
-
-const computeEngineIamMember = gcp.organizations
-    .getProject({projectId: projectId})
-    .then(projectResult => {return "serviceAccount:"+ projectResult.number + "-compute@developer.gserviceaccount.com"});
-
-/*
-const projectIamBindingEditor = new gcp.projects.IAMBinding(
-    "projectIamBindingEditor", 
+export const deadLetterTopic = new gcp.pubsub.Topic(
+    "dead-letter", 
     {
-        role: "roles/editor",
-        project: projectId,
-        members: [
-            cloudBuildIamMember
-        ]
-    },
-    {
-        dependsOn: [
-            cloudBuildApi
-        ]
-    }
-);*/
-
-const projectIamBindingDataflowAdmin = new gcp.projects.IAMBinding(
-    "projectIamBindingDataflowAdmin", 
-    {
-        role: "roles/dataflow.admin",
-        project: projectId,
-        members: [
-            cloudBuildIamMember
-        ]
-    }
-);
-
-const projectIamBindingCloudFunctionsDeveloper = new gcp.projects.IAMBinding(
-    "projectIamBindingCloudFunctionsDeveloper", 
-    {
-        role: "roles/cloudfunctions.developer",
-        project: projectId,
-        members: [
-            cloudBuildIamMember
-        ]
-    }
-);
-
-const projectIamBindingRunAdmin = new gcp.projects.IAMBinding(
-    "projectIamBindingRunAdmin", 
-    {
-        role: "roles/run.admin",
-        project: projectId,
-        members: [
-            cloudBuildIamMember, 
-            pulumi.interpolate`serviceAccount:${streamProcessorServiceAccountEmail}`
-        ]
-    }
-);
-
-const projectIamBindingIamServiceAccountUser = new gcp.projects.IAMBinding(
-    "projectIamBindingIamServiceAccountUser", 
-    {
-        role: "roles/iam.serviceAccountUser",
-        project: projectId,
-        members: [
-            cloudBuildIamMember,
-            pulumi.interpolate`serviceAccount:${streamProcessorServiceAccountEmail}`
-        ]
-    }
-);
-
-const projectIamBindingCloudkmsCryptoKeyEncrypterDecrypter = new gcp.projects.IAMBinding(
-    "projectIamBindingCloudkmsCryptoKeyEncrypterDecrypter", 
-    {
-        role: "roles/cloudkms.cryptoKeyEncrypterDecrypter",
-        project: projectId,
-        members: [
-            cloudBuildIamMember, 
-            cloudBuildAgentIamMember,
-            pulumi.interpolate`serviceAccount:${streamProcessorServiceAccountEmail}`
-        ]
-    }
-);
-
-const projectIamBindingSecretmanagerSecretAccessor = new gcp.projects.IAMBinding(
-    "projectIamBindingSecretmanagerSecretAccessor", 
-    {
-        role: "roles/secretmanager.secretAccessor",
-        project: projectId,
-        members: [
-            cloudBuildIamMember
-        ]
-    }
-);
-
-const projectIamBindingCloudfunctionsAdmin = new gcp.projects.IAMBinding(
-    "projectIamBindingCloudfunctionsAdmin", 
-    {    
-        role: "roles/cloudfunctions.admin",
-        project: projectId,
-        members: [
-            pulumi.interpolate`serviceAccount:${streamProcessorServiceAccountEmail}`
-        ]
-    }
-);
-     
-const projectIamBindingPubsubEditor = new gcp.projects.IAMBinding(
-    "projectIamBindingPubsubEditor", 
-    {
-        role: "roles/pubsub.editor",
-        project: projectId,
-        members: [
-            pulumi.interpolate`serviceAccount:${streamProcessorServiceAccountEmail}`
-        ]
-    }
-);    
-
-const projectIamBindingStorageObjectAdmin = new gcp.projects.IAMBinding(
-    "projectIamBindingStorageObjectAdmin", 
-    {
-        role: "roles/storage.objectAdmin",
-        project: projectId,
-        members: [
-            pulumi.interpolate`serviceAccount:${streamProcessorServiceAccountEmail}`
-        ]
-    }
-);
-    
-const projectIamBindingBigqueryDataEditor = new gcp.projects.IAMBinding(
-    "projectIamBindingBigqueryDataEditor", 
-    {
-        role: "roles/bigquery.dataEditor",
-        project: projectId,
-        members: [
-            pulumi.interpolate`serviceAccount:${streamProcessorServiceAccountEmail}`
-        ]
-    }
-);
-
-const projectIamBindingIamServiceAccountTokenCreator = new gcp.projects.IAMBinding(
-    "projectIamBindingIamServiceAccountTokenCreator", 
-    {
-        role: "roles/iam.serviceAccountTokenCreator",
-        project: projectId,
-        members: [
-            pubsubServiceAgentIamMember
-        ]
-    }
-);
-
-const streamProcessorServiceAccountKey = new gcp.serviceaccount.Key(
-    "streamProcessorServiceAccountKey", 
-    {
-        serviceAccountId: streamProcessorServiceAccountEmail
-    }
-);
-
-const streamProcessorServiceAccountSecret = new gcp.secretmanager.Secret(
-    "streamProcessorServiceAccountSecret", 
-    {
-        secretId: "pulumi-credentials",
-        replication: {
-            userManaged: {
-                replicas:[
-                    {location: "us-central1"}
-                ]
-            }
+        labels: {
+            program: "infra",
+            stream: "all",
+            component: "dead-letter",
+        },
+        messageStoragePolicy: {
+            allowedPersistenceRegions: [
+                gcpConfig.require("region")
+            ]
         }
     }
 );
 
-const streamProcessorServiceAccountSecretVersion = new gcp.secretmanager.SecretVersion(
-    "streamProcessorServiceAccountSecretVersion",
+
+
+/*
+******** START BACKUP ********
+*/
+
+export const backupTopic = new gcp.pubsub.Topic(
+    "backup", 
     {
-        secret: streamProcessorServiceAccountSecret.name,
-        secretData: streamProcessorServiceAccountKey.privateKey.apply(
-            privateKey => Buffer.from(privateKey, 'base64').toString('ascii')
-        )
-    },
-    {
-        dependsOn:[ 
-            streamProcessorServiceAccountSecret
-        ]
+        labels: {
+            program: "infra",
+            stream: "all",
+            component: "backup",
+        },
+        messageStoragePolicy: {
+            allowedPersistenceRegions: [
+                gcpConfig.require("region")
+            ]
+        }
     }
 );
 
-
-// kms encryption
-const streamProcessorKmsKeyRing = new gcp.kms.KeyRing(
-    "streamProcessorKmsKeyRing", 
+const backupSubscription = new gcp.pubsub.Subscription(
+    "backupSubscription", 
     {
-        name: "streamprocessor",
-        location: "global",
-        project: projectId
-    }
-);
-
-const streamProcessorKmsCryptoKey = new gcp.kms.CryptoKey(
-    "streamProcessorKmsCryptoKey", 
-    {
-        name: "pulumi",
-        keyRing: streamProcessorKmsKeyRing.id,
+        topic: backupTopic.name,
+        ackDeadlineSeconds: 20,
+        labels: {
+            program: "infra",
+            stream: "all",
+            component: "backup",
+        },
+        deadLetterPolicy: {
+            deadLetterTopic: deadLetterTopic.id,
+            maxDeliveryAttempts: 10,
+        },
+        retryPolicy: {
+            minimumBackoff: "10s",
+        },
     }, 
+    { 
+        dependsOn: [ 
+            deadLetterTopic
+        ] 
+    }
+);
+
+/*
+******** END BACKUP ********
+*/
+
+
+
+/*
+******** START COLLECTOR ********
+*/
+
+export const collectedTopic = new gcp.pubsub.Topic(
+    "collected", 
     {
-        dependsOn:[
-            streamProcessorKmsKeyRing
+        labels: {
+            program: "infra",
+            stream: "all",
+            component: "collector",
+        },
+        messageStoragePolicy: {
+            allowedPersistenceRegions: [
+                gcpConfig.require("region")
+            ]
+        }
+    }
+);
+
+export const collectorService: gcp.cloudrun.Service = new gcp.cloudrun.Service(
+    "collector-service",
+    {
+        location: `${region}`,
+        template: {
+            spec: {
+                serviceAccountName: serviceAccountName,
+                containers: [
+                    {
+                        envs: [
+                            {
+                                name: "TOPIC",
+                                value: collectedTopic["name"],
+                            },
+                            {
+                                name: "API_KEYS",
+                                value: collectorApiKeys,
+                            },
+                            {
+                                name: "ALLOW_ORIGINS",
+                                value: collectorAllowedOrigins,
+                            }
+                        ],
+                        image: `${artifactRegistryHostname}/streamprocessor-org/collector/cloud-run-node:${collectorVersion}`,
+                    }
+                ],
+            },
+            metadata: {
+                annotations: {
+                    "autoscaling.knative.dev/maxScale": "10"
+                },
+                labels: {
+                    program: "infra",
+                    stream: "all",
+                    component: "collector",
+                },
+            }
+        },
+        traffics: [
+            {
+                latestRevision: true,
+                percent: 100,
+            }
+        ],
+    },
+    { 
+        dependsOn: [
+            collectedTopic
+        ] 
+    }
+);
+
+new gcp.cloudrun.IamMember (
+    "collector-service-iam-public-invoker", 
+    {
+        project: collectorService.project,
+        location: collectorService.location,
+        service: collectorService.name,
+        role: "roles/run.invoker",
+        member: "allUsers",
+    }, 
+    { 
+        dependsOn: [
+            collectorService
         ]
+    }
+);
+
+/*
+******** END COLLECTOR ********
+*/
+
+
+
+/*
+******** START REGISTRATOR ********
+*/
+
+// Deploy registrator on cloud run. Modify max instances if needed (default 10).
+export const registryService = new gcp.cloudrun.Service(
+    "registrator", 
+    {
+        location: `${region}`,
+        template: {
+            spec: {
+                serviceAccountName: serviceAccountName,
+                containers: [
+                    {
+                        envs: [
+                            {
+                                name: "COMPATIBILITY",
+                                value: "BACKWARD",
+                            },
+                            {
+                                name: "BUCKET",
+                                value: projectId + "-schemas",
+                            },                            
+                        ],
+                        image: `${artifactRegistryHostname}/streamprocessor-org/registrator/cloud-run-java:${registratorVersion}`,
+                    }
+                ],
+            },
+            metadata: {
+                annotations: {
+                    "autoscaling.knative.dev/maxScale": "10"
+                },
+                labels: {
+                    program: "infra",
+                    stream: "all",
+                    component: "registrator",
+                },
+            }
+        },
+        traffics: [
+            {
+                latestRevision: true,
+                percent: 100,
+            }
+        ],
+    });
+
+export const registryServiceUrl = registryService.statuses[0].url;
+
+/*
+******** END REGISTRATOR ********
+*/
+
+
+/*
+******** START BIGQUERY ********
+*/
+// Placeholder dataset for tables containing subjects, schemas, stacks and backups (TODO).
+const streamProcessorDataset = new gcp.bigquery.Dataset(
+    "dataset-streamprocessor",
+    {
+        datasetId: "streamprocessor",
+        friendlyName: "streamprocessor",
+        description: "StreamProcessor admin dataset.",
+        location: bigQueryLocation,
+        labels: {
+            stream: "all",
+            component: "infra",
+        },
     }
 );
