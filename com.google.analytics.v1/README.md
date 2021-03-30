@@ -46,16 +46,21 @@ const bigQueryLocation = "EU"; // <-- set region for BigQuery Dataset
 // add subject schemas for the properties you stream.
 let subjectSchemas: StreamProcessor.SubjectSchema[] = [
    {
-        "subject": "com.google.analytics.v1.ua233405661",
-        "filename":"/com.google.analytics.v1/schemas/com.google.analytics.v1.ua233405661.avsc",
+        "subject": "com.google.analytics.v1.ua1234567",
+        "filename":"/com.google.analytics.v1/schemas/com.google.analytics.v1.ua1234567.avsc",
         "schemaType":"AVRO",
         "references":[]
     },
 ];
  ```
+ * Subject is the name of the event.
+ * Filename is the path to the Avro schema file.
+ * SchemaType is the type of schema (i.e. Avro)
+ * References is used if the schema refers to records defined in another schema. 
 
 ### 1.2.2 Create a schema in com.google.analytics.v1/schemas/ 
-Copy the schema template and name it according to your property id. Add your specific custom dimensions and metrics (hit and product level). The example below shows how the customDimensions and customMetrics can look like. You can also change the doc property on any field, but don't change anything else.
+1. Copy the schema template and name it according to your property id (ex. com.google.analytics.v1.ua1234567.avsc). 
+2. Add your specific custom dimensions and metrics (hit and product level). The example below shows how the customDimensions and customMetrics can look like. You can also change the doc property on any field, but don't change anything else. Remember that BigQuery schemas are additive, i.e. you can add fields but not remove them, and you can relax a required field to optional but not the opposite.
 
 * type = a type that is an array of null and a type is an optional field. A type with only a primitive type (string, int, etc.) and not array is a required field. (required)
 * name = the name of the field (required)
@@ -168,3 +173,32 @@ git push origin pipeline/com.google.analytics.v1
 # switch back to main branch
 git checkout main
 ```
+
+## 1.3 Add client script
+There are many ways to emitt Google Analytics events to your own StreamProcessor collector endpoint.
+
+### 1.3.1 Google Tag Manager (client side)
+Google Tag Manager (GTM) lets you add a Google Analytics (GA) custom task to copy the GA payload and send it also to the StreamProcessor collector endpoint.
+
+1. Create a custom javascript variable in GTM and name it "customTask". Add the URL to your collector as the hostname variable in the script below. Save. 
+```javascript
+function() {
+	return function(model) {		
+	    var globalSendTaskName = '_' + model.get('trackingId') + '_sendHitTask';
+	    var originalSendHitTask = window[globalSendTaskName] = window[globalSendTaskName] || model.get('sendHitTask');
+        var hostname = ""; /* the collector URL */
+        var subject = model.get('trackingId').toLowerCase().replace(/[-]/g, "");
+        var endpoint = hostname + "/subject/com.google.analytics.v1." + subject;
+	    model.set('sendHitTask', function(sendModel) {
+            try{
+                originalSendHitTask(sendModel);
+            }catch(e){
+                console.log(e);
+            }
+            navigator.sendBeacon(endpoint, sendModel.get('hitPayload'));
+		});
+	};
+}
+```
+2. Set a field in the GA Settings variable (in GTM) with field name "customTask" and value {{customTask}}
+3. Create version and publish it in GTM
