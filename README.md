@@ -6,6 +6,8 @@ If you find any bugs or issues in the starter kit, please <a href="https://githu
 ---
 
 ## 1. Private copy of the starter repository
+
+### 1.1 Initial copy
 Follow the steps to get a private copy of the public starter repository, while being able to sync changes from the original starter repository.
 
 1. Create your own private streamprocessor <a href="https://docs.github.com/en/articles/creating-a-new-repository" target="_blank">repository on GitHub</a>, i.e. something like https://github.com/[USER]/streamprocessor.git
@@ -16,6 +18,15 @@ Follow the steps to get a private copy of the public starter repository, while b
 ./clone.sh [USER]
 ```
 Now you should have a local and remote repository containing the latest version of the starter template code.
+
+### 1.2. Update with the latest changes in the public starter repository
+If you at any time want to update your private repo with the latest changes in the public starter repository.
+
+```bash
+# first make sure working directory is streamprocessor (cd streamprocessor)
+git pull public main # Creates a merge commit
+git push origin main
+```
 
 ---
 
@@ -47,17 +58,6 @@ Here you find instructions for setting up different pipelines. Common for all pi
 This is a streaming pipeline for Google Analytics data (universal analytics).
 [Setup instructions](/com.google.analytics.v1/README.md)
 
----
-
-
-## 5. Update with the latest changes in the public starter repository
-To update your private repo with the latest changes in the public starter repository.
-
-```bash
-# first make sure working directory is streamprocessor (cd streamprocessor)
-git pull public main # Creates a merge commit
-git push origin main
-```
 
 ---
 
