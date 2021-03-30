@@ -12,27 +12,8 @@ Follow the steps to get a private copy of the public starter repository, while b
 2. <a href="https://ide.cloud.google.com" target="_blank">Open cloud shell</a> and run:
 
 ```bash
-# Replace USER
-USER=[MY_GITHUB_USER_OR_ORG]
-PRIVATE_REPO=https://github.com/${USER}/streamprocessor.git
-
-# Clone the public starter repository
-git clone --bare https://github.com/streamprocessor/starter.git
-
-# Mirror-push to the new repository.
-cd starter.git
-git push --mirror ${PRIVATE_REPO}
-
-# Remove the temporary local repository you created earlier.
-cd ..
-rm -rf starter.git
-
-# Clone the private repo so you can work on it.
-git clone ${PRIVATE_REPO}
-cd streamprocessor
-
-# Add a remote to the public starter repo to pull changes if needed.
-git remote add public https://github.com/streamprocessor/starter.git
+# Replace [USER] with the github account handle (i.e. user or org) where you want the private copy.
+./clone.sh [USER]
 ```
 Now you should have a local and remote repository containing the latest version of the starter template code.
 
