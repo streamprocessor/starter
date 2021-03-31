@@ -15,7 +15,7 @@ const stateBucket = new gcp.storage.Bucket(
         location: gcpConfig.require("region")
     },
     {
-        import: projectId + "-state"
+        //import: projectId + "-state"
     }
 );
 export const stateBucketName = stateBucket.url;
@@ -117,7 +117,7 @@ const streamProcessorServiceAccount = new gcp.serviceaccount.Account(
         dependsOn: [
             iamApi
         ],
-        import:"streamprocessor@" + projectId + ".iam.gserviceaccount.com"
+        //import:"streamprocessor@" + projectId + ".iam.gserviceaccount.com"
     }
 );
 
@@ -352,7 +352,7 @@ const streamProcessorServiceAccountSecret = new gcp.secretmanager.Secret(
         dependsOn:[
             secretManagerApi
         ],
-        import: "pulumi-credentials"
+        //import: "pulumi-credentials"
     }
 );
 
@@ -385,7 +385,7 @@ const streamProcessorKmsKeyRing = new gcp.kms.KeyRing(
         dependsOn:[
             cloudKmsApi
         ],
-        import: "projects/"+ projectId + "/locations/global/keyRings/streamprocessor"
+        //import: "projects/"+ projectId + "/locations/global/keyRings/streamprocessor"
     }
 );
 
@@ -399,6 +399,6 @@ new gcp.kms.CryptoKey(
         dependsOn:[
             streamProcessorKmsKeyRing
         ],
-        import:"projects/" + projectId + "/locations/global/keyRings/streamprocessor/cryptoKeys/pulumi"
+        //import:"projects/" + projectId + "/locations/global/keyRings/streamprocessor/cryptoKeys/pulumi"
     }
 );
