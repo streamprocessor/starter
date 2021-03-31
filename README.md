@@ -6,6 +6,7 @@ If you find any bugs or issues in the starter kit, please <a href="https://githu
 ---
 
 ## 1. Private copy of the starter repository
+To work with StreamProcessor you need a [GitHub account](https://docs.github.com/en/github/getting-started-with-github/signing-up-for-a-new-github-account) and a [GitHub personal access token](https://docs.github.com/en/github/authenticating-to-github/creating-a-personal-access-token). Avoid authenticating everytime you interact with your private repo by [caching your GitHub credentials](https://docs.github.com/en/github/getting-started-with-github/caching-your-github-credentials-in-git) in google cloud shell (you can change default timeout of 1 hour to something longer).
 
 ### 1.1 Initial copy
 Follow the steps to get a private copy of the public starter repository, while being able to sync changes from the original starter repository.
@@ -80,6 +81,12 @@ This is a streaming pipeline for Google Analytics data (universal analytics).
 ---
 
 ## 6 Tips & Trix
+
+### 6.1 Caching GitHub personal access token in Cloud Shell
+1. [First create a personal access token](https://docs.github.com/en/github/authenticating-to-github/creating-a-personal-access-token).
+2. Avoid authenticating everytime you interact with your private repo by [caching your GitHub credentials](https://docs.github.com/en/github/getting-started-with-github/caching-your-github-credentials-in-git)
+
+### 6.2 Syntax highlighting AVRO files in Cloud Shell Editor
 If using cloud shell ide, add the following file association to make it easier (suntax highlighting) to work with avro files (.avsc).
 
 ```json
