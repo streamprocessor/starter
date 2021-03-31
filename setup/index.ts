@@ -317,7 +317,7 @@ new gcp.projects.IAMBinding(
 );
 
 new gcp.projects.IAMBinding(
-    "projectIamBindingRunAdmin", 
+    "projectIamBindingRunArtifactRegistryReader", 
     {
         role: "roles/artifactregistry.reader",
         project: projectId,
