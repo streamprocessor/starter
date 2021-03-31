@@ -12,7 +12,7 @@ To work with StreamProcessor you need a [Google Cloud Platform account](https://
 Follow the steps to get a private copy of the public starter repository, while being able to sync changes from the original starter repository.
 
 1. Create your own private streamprocessor <a href="https://docs.github.com/en/articles/creating-a-new-repository" target="_blank">repository on GitHub</a>, i.e. something like https://github.com/[USER]/streamprocessor.git
-2. <a href="https://ide.cloud.google.com" target="_blank">Open cloud shell</a> and run:
+2. <a href="https://shell.cloud.google.com" target="_blank">Open cloud shell</a> and run:
 
 ```bash
 # Your private git repo URL https://github.com/[USER]/streamprocessor.git
