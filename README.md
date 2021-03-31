@@ -3,6 +3,8 @@ This repository contains everything you need to get started with StreamProcessor
 
 If you find any bugs or issues in the starter kit, please <a href="https://github.com/streamprocessor/starter/issues" target="_blank">report the bug/issue here.</a>. There is also a support channel in the StreamProcessor slack community.
 
+[Video guides covering the steps below](https://www.youtube.com/playlist?list=PL9VRkI0zkbdWKkVV-M8fysjdGytjP5vdb).
+
 ---
 
 ## 1. Private copy of the starter repository
@@ -49,13 +51,13 @@ git push origin main
 
 ---
 
-### 3 Set up Pulumi and enable API:s
+## 2 Set up Pulumi and enable API:s
 This step prepares your project by enabling API:s, get access to StreamProcessor artifacts and connect Cloud Build to your private GitHub repository.
 [Setup instructions](/setup/README.md)
 
 ---
 
-### 3 Shared infrastructure
+## 3 Shared infrastructure
 This step creates infrastructure that is shared across the pipelines, i.e. staging buckets, schema registry, etc.
 [Setup instructions](/infra/README.md)
 
