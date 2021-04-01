@@ -1,6 +1,6 @@
 {
 	"type": "record",
-	"name": "ua233405661",
+	"name": "uaNNNNNNN",
 	"namespace": "com.google.analytics.v1",
 	"fields": [
 		{
@@ -98,30 +98,6 @@
 							"default": null,
 							"aliases": [
 								"cd4"
-							]
-						},
-						{
-							"name": "myBoolean2",
-							"type": [
-								"null",
-								"boolean"
-							],
-							"doc": "look, it is a boolean2",
-							"default": null,
-							"aliases": [
-								"cd47"
-							]
-						},
-						{
-							"name": "myBoolean3",
-							"type": [
-								"null",
-								"boolean"
-							],
-							"doc": "look, it is a boolean",
-							"default": null,
-							"aliases": [
-								"cd48"
 							]
 						}
 					]
