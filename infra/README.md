@@ -5,10 +5,13 @@ This step creates infrastructure that is shared across the pipelines, i.e. stagi
 In order to trigger a pulumi preview (continous integration) and pulumi up (continous deploy) of your streamprocessor shared infra, you need to set up two cloud build triggers, one to run pulumi preview on pull request and one to run pulumi up on the merge (push).
 
 ```bash
+# Your GitHub USER/ORG for the streamprocessor repo
+USER=
+
 # A trigger to run pulumi preview (integration) on pull request
 gcloud beta builds triggers create github \
  --name="streamprocessor-infra-ci" \
- --repo-owner="[USER]" \
+ --repo-owner="${USER}" \
  --repo-name="streamprocessor" \
  --pull-request-pattern="^main$" \
  --comment-control="COMMENTS_DISABLED" \
@@ -18,7 +21,7 @@ gcloud beta builds triggers create github \
 # A trigger to run pulumi up (deployment) on pull request
 gcloud beta builds triggers create github \
  --name="streamprocessor-infra-cd" \
- --repo-owner="[USER]" \
+ --repo-owner="${USER}" \
  --repo-name="streamprocessor" \
  --branch-pattern="^main$" \
  --included-files="infra/**" \
