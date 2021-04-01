@@ -5,11 +5,14 @@ This is a streaming pipeline for Google Analytics data (universal analytics). Yo
 In order to trigger a pulumi preview (continous integration) and pulumi up (continous deploy) of your streamprocessor shared infra, you need to set up two cloud build triggers, one to run pulumi preview on pull request and one to run pulumi up on the merge (push).
 
 ```bash
+# set to your github USER or ORG where you have your private streamprocessor repository
+USER=
+
 # A trigger to run pulumi preview (integration) on pull request. 
 # Replace [USER] with your github user/organisation containing your private remote repository.
 gcloud beta builds triggers create github \
  --name="streamprocessor-com-google-analytics-v1-ci" \
- --repo-owner="[USER]" \
+ --repo-owner="${USER}" \
  --repo-name="streamprocessor" \
  --pull-request-pattern="^main$" \
  --comment-control="COMMENTS_DISABLED" \
@@ -20,7 +23,7 @@ gcloud beta builds triggers create github \
 # Replace [USER] with your github user/organisation containing your private remote repository.
 gcloud beta builds triggers create github \
  --name="streamprocessor-com-google-analytics-v1-cd" \
- --repo-owner="[USER]" \
+ --repo-owner="${USER}" \
  --repo-name="streamprocessor" \
  --branch-pattern="^main$" \
  --included-files="./com.google.analytics.v1/**" \
