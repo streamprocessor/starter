@@ -12,7 +12,7 @@ gcloud beta builds triggers create github \
  --repo-name="streamprocessor" \
  --pull-request-pattern="^main$" \
  --comment-control="COMMENTS_DISABLED" \
- --included-files="infra/**" \ 
+ --included-files="infra/**" \
  --build-config="infra/cloudbuild.pulumi.yaml"
 
 # A trigger to run pulumi up (deployment) on pull request
