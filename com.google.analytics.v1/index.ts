@@ -228,7 +228,7 @@ const comGoogleAnalyticsV1EntityDataset = new gcp.bigquery.Dataset(
     }
 );
 
-/*
+
 const comGoogleAnalyticsV1Dataflow = new gcp.dataflow.FlexTemplateJob(
     "dataflow-com-google-analytics-v1", 
     {
@@ -257,7 +257,7 @@ const comGoogleAnalyticsV1Dataflow = new gcp.dataflow.FlexTemplateJob(
             transformedSubscription
         ]
     });
-*/
+
 
 /*
 ******** END STREAMER ********
