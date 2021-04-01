@@ -16,7 +16,7 @@ gcloud beta builds triggers create github \
  --repo-name="streamprocessor" \
  --pull-request-pattern="^main$" \
  --comment-control="COMMENTS_DISABLED" \
- --included-files="./com.google.analytics.v1/**" \
+ --included-files="com.google.analytics.v1/**" \
  --build-config="com.google.analytics.v1/cloudbuild.pulumi.yaml"
 
 # A trigger to run pulumi up (deployment) on pull request. 
@@ -26,7 +26,7 @@ gcloud beta builds triggers create github \
  --repo-owner="${USER}" \
  --repo-name="streamprocessor" \
  --branch-pattern="^main$" \
- --included-files="./com.google.analytics.v1/**" \
+ --included-files="com.google.analytics.v1/**" \
  --build-config="com.google.analytics.v1/cloudbuild.pulumi.yaml" \
  --substitutions _BUILD_TYPE=up
 ```
