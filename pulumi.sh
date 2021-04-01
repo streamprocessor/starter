@@ -44,7 +44,7 @@ pulumi config set serviceAccountName streamprocessor@${GOOGLE_PROJECT}.iam.gserv
 #pulumi logs -f
 
 case $BUILD_TYPE in
-  PullRequest)
+  preview)
       pulumi preview
     ;;
   *)
