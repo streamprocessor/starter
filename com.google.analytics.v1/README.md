@@ -46,8 +46,8 @@ const bigQueryLocation = "EU"; // <-- set region for BigQuery Dataset
 // add subject schemas for the properties you stream.
 let subjectSchemas: StreamProcessor.SubjectSchema[] = [
    {
-        "subject": "com.google.analytics.v1.ua1234567",
-        "filename":"/com.google.analytics.v1/schemas/com.google.analytics.v1.ua1234567.avsc",
+        "subject": "com.google.analytics.v1.uaNNNNNNN",
+        "filename":"/com.google.analytics.v1/schemas/com.google.analytics.v1.uaNNNNNNN.avsc",
         "schemaType":"AVRO",
         "references":[]
     },
