@@ -189,7 +189,7 @@ const infraBigQueryDataset = new gcp.bigquery.Dataset(
         location: bigQueryLocation,
         labels: {
             stream: "infra",
-            component: "dataWareHouse",
+            component: "sink",
         },
     }
 );
