@@ -324,7 +324,7 @@ const comGoogleAnalyticsV1Dataflow = new gcp.dataflow.FlexTemplateJob(
         onDelete: "drain",
         region: region,        
         parameters: {
-            inputSubscription: comGoogleAnalyticsV1TransformedSubscription.path,
+            inputSubscription: comGoogleAnalyticsV1TransformedSubscription.id,
             registratorHost: registratorUrl,
             outputTopic: comGoogleAnalyticsV1StreamerTopic.id,
             backupTopic: backupTopic,
@@ -334,6 +334,11 @@ const comGoogleAnalyticsV1Dataflow = new gcp.dataflow.FlexTemplateJob(
             maxNumWorkers: 1,
             workerMachineType: "n1-standard-1", // n1-standard-2, 
             serviceAccount: serviceAccountName
+        },
+        labels: {
+            stream: "com-google-analytics-v1",
+            component: "streamer",
+            cachebuster: Date.now().toString()
         },
     }, 
     {
