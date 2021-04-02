@@ -58,7 +58,7 @@ export const comGoogleAnalyticsV1CollectedTopic = new gcp.pubsub.Topic(
     "comGoogleAnalyticsV1CollectedTopic", 
     {
         labels: {
-            stream: "comGoogleAnalyticsV1",
+            stream: "com-google-analytics-v1",
             component: "collector",
         },
         messageStoragePolicy: {
@@ -101,7 +101,7 @@ export const comGoogleAnalyticsV1CollectorService = new gcp.cloudrun.Service(
                     "autoscaling.knative.dev/maxScale": "10"
                 },
                 labels: {
-                    stream: "comGoogleAnalyticsV1",
+                    stream: "com-google-analytics-v1",
                     component: "collector",
                 },
             }
@@ -149,7 +149,7 @@ export const comGoogleAnalyticsV1TransformedTopic = new gcp.pubsub.Topic(
     "comGoogleAnalyticsV1TransformedTopic", 
     {
         labels: {
-            stream: "comGoogleAnalyticsV1",
+            stream: "com-google-analytics-v1",
             component: "transformer",
         },
         messageStoragePolicy: {
@@ -184,7 +184,7 @@ const comGoogleAnalyticsV1TransformerService = new gcp.cloudrun.Service(
                     "autoscaling.knative.dev/maxScale": "10"
                 },
                 labels: {
-                    stream: "comGoogleAnalyticsV1",
+                    stream: "com-google-analytics-v1",
                     component: "transformer",
                 },
             }
@@ -207,7 +207,7 @@ const comGoogleAnalyticsV1CollectedSubscription = new gcp.pubsub.Subscription(
         ackDeadlineSeconds: 20,
         filter: "hasPrefix(attributes.subject, \"com.google.analytics.v1\")",
         labels: {
-            stream: "comGoogleAnalyticsV1",
+            stream: "com-google-analytics-v1",
             component: "transformer",
         },
         pushConfig: {
@@ -243,8 +243,7 @@ const comGoogleAnalyticsV1DeadLetterSubscription = new gcp.pubsub.Subscription(
         retainAckedMessages: true,
         filter: "hasPrefix(attributes.subject, \"com.google.analytics.v1\")",
         labels: {
-            program: "infra",
-            stream: "all",
+            stream: "com-google-analytics-v1",
             component: "backup",
         },
         retryPolicy: {
@@ -268,7 +267,7 @@ export const comGoogleAnalyticsV1StreamerTopic = new gcp.pubsub.Topic(
     "comGoogleAnalyticsV1StreamerTopic", 
     {
         labels: {
-            stream: "comGoogleAnalyticsV1",
+            stream: "com-google-analytics-v1",
             component: "streamer",
         },
         messageStoragePolicy: {
@@ -285,7 +284,7 @@ const comGoogleAnalyticsV1TransformedSubscription = new gcp.pubsub.Subscription(
         topic: comGoogleAnalyticsV1TransformedTopic.name,
         ackDeadlineSeconds: 20,
         labels: {
-            stream: "comGoogleAnalyticsV1",
+            stream: "com-google-analytics-v1",
             component: "streamer",
         },
         deadLetterPolicy: {
@@ -311,7 +310,7 @@ const comGoogleAnalyticsV1BigQueryDataset = new gcp.bigquery.Dataset(
         description: "Google Analytics v1 dataset.",
         location: bigQueryLocation,
         labels: {
-            stream: "comGoogleAnalyticsV1",
+            stream: "com-google-analytics-v1",
             component: "dataWareHouse",
         },
     }
