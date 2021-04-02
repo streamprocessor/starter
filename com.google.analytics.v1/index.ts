@@ -203,7 +203,7 @@ export const comGoogleAnalyticsV1TransformerServiceUrl = comGoogleAnalyticsV1Tra
 const comGoogleAnalyticsV1CollectedSubscription = new gcp.pubsub.Subscription(
     "comGoogleAnalyticsV1CollectedSubscription",
     {
-        topic: comGoogleAnalyticsV1CollectedTopic,
+        topic: comGoogleAnalyticsV1CollectedTopic.id,
         ackDeadlineSeconds: 20,
         filter: "hasPrefix(attributes.subject, \"com.google.analytics.v1\")",
         labels: {
