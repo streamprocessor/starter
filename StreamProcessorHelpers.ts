@@ -91,7 +91,7 @@ export async function postSchemasToRegistry(subjectSchema: SubjectSchema, hostna
             }
         );
     }catch(err){
-        console.error(err);
+        console.error(err.message);
         process.exitCode = 1;
     }
 }
@@ -122,11 +122,11 @@ export async function patchTable(datasetId: string, tableId: string, hostname:st
             return JSON.stringify(metadata.schema.fields);
         }
     }catch(err){
-        console.error(err);
         if(err.code==404){
             console.info("Table doesn't exist yet, create a new one.");
             return newSchemaString;
         }else{
+            console.error(err.message);
             process.exitCode = 1;
             return undefined;
         }
