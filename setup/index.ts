@@ -127,25 +127,6 @@ export const streamProcessorServiceAccountEmail = streamProcessorServiceAccount.
 * Bind roles on project level
 */
 
-/*
-const projectIamBindingEditor = new gcp.projects.IAMBinding(
-    "projectIamBindingEditor", 
-    {
-        role: "roles/editor",
-        project: projectId,
-        members: [
-            cloudBuildIamMember
-        ]
-    },
-    {
-        dependsOn: [
-            cloudBuildApi
-        ]
-    }
-);
-
-*/
-
 // IAM
 
 new gcp.projects.IAMBinding(
@@ -222,9 +203,9 @@ new gcp.projects.IAMBinding(
 );
 
 new gcp.projects.IAMBinding(
-    "projectIamBindingStorageObjectAdmin", 
+    "projectIamBindingStorageAdmin", 
     {
-        role: "roles/storage.objectAdmin",
+        role: "roles/storage.admin",
         project: projectId,
         members: [
             pulumi.interpolate`serviceAccount:${streamProcessorServiceAccountEmail}`
@@ -288,7 +269,19 @@ new gcp.projects.IAMBinding(
         role: "roles/dataflow.admin",
         project: projectId,
         members: [
-            cloudBuildIamMember
+            cloudBuildIamMember,
+            pulumi.interpolate`serviceAccount:${streamProcessorServiceAccountEmail}`
+        ]
+    }
+);
+
+new gcp.projects.IAMBinding(
+    "projectIamBindingDataflowWorker", 
+    {
+        role: "roles/dataflow.worker",
+        project: projectId,
+        members: [
+            pulumi.interpolate`serviceAccount:${streamProcessorServiceAccountEmail}`
         ]
     }
 );
