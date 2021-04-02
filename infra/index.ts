@@ -63,7 +63,7 @@ export const deadLetterTopic = new gcp.pubsub.Topic(
     {
         labels: {
             stream: "infra",
-            component: "deadLetter",
+            component: "dead-letter",
         },
         messageStoragePolicy: {
             allowedPersistenceRegions: [
