@@ -24,56 +24,56 @@ export const stateBucketName = stateBucket.url;
 * Enable API:s
 */
 const secretManagerApi = new gcp.projects.Service(
-    "secretManagerApi", 
+    "secret-manager-api", 
     {
         service: "secretmanager.googleapis.com"
     }
 );
 
 const iamApi = new gcp.projects.Service(
-    "iamApi", 
+    "iam-api", 
     {
         service: "iam.googleapis.com"
     }
 );
 
 const cloudBuildApi = new gcp.projects.Service(
-    "cloudBuildApi", 
+    "cloud-build-api", 
     {
         service: "cloudbuild.googleapis.com"
     }
 );
 
 new gcp.projects.Service(
-    "cloudRunApi",
+    "cloud-run-api",
     {
         service: "run.googleapis.com"
     }
 );
 
 new gcp.projects.Service(
-    "cloudfunctionsApi", 
+    "cloudfunctions-api", 
     {
         service: "cloudfunctions.googleapis.com"
     }
 );
 
 const cloudKmsApi = new gcp.projects.Service(
-    "cloudKmsApi", 
+    "cloud-kms-api", 
     {
         service: "cloudkms.googleapis.com"
     }
 );
 
 new gcp.projects.Service(
-    "dataflowApi", 
+    "dataflow-api", 
     {
         service: "dataflow.googleapis.com"
     }
 );
 
 const pubsubApi = new gcp.projects.Service(
-    "pubsubApi", 
+    "pubsub-api", 
     {
         service: "pubsub.googleapis.com"
     }
@@ -107,7 +107,7 @@ const computeEngineIamMember = gcp.organizations
     .then((projectResult: { number: string; }) => {return "serviceAccount:"+ projectResult.number + "-compute@developer.gserviceaccount.com"});
 
 const streamProcessorServiceAccount = new gcp.serviceaccount.Account(
-    "streamProcessorServiceAccount",
+    "streamprocessor-service-account",
     {
         accountId: "streamprocessor",
         description:"The service account used by StreamProcessor services",
@@ -130,7 +130,7 @@ export const streamProcessorServiceAccountEmail = streamProcessorServiceAccount.
 // IAM
 
 new gcp.projects.IAMBinding(
-    "projectIamBindingIamServiceAccountUser", 
+    "project-iam-binding-iam-service-account-user", 
     {
         role: "roles/iam.serviceAccountUser",
         project: projectId,
@@ -148,7 +148,7 @@ new gcp.projects.IAMBinding(
 );
 
 new gcp.projects.IAMBinding(
-    "projectIamBindingIamCloudBuildBuilder", 
+    "project-iam-binding-iam-cloud-build-builder", 
     {
         role: "roles/cloudbuild.builds.builder",
         project: projectId,
@@ -166,7 +166,7 @@ new gcp.projects.IAMBinding(
 );
 
 new gcp.projects.IAMBinding(
-    "projectIamBindingCloudkmsCryptoKeyEncrypterDecrypter", 
+    "project-iam-binding-cloud-kms-crypto-key-encrypter-decrypter", 
     {
         role: "roles/cloudkms.cryptoKeyEncrypterDecrypter",
         project: projectId,
@@ -186,7 +186,7 @@ new gcp.projects.IAMBinding(
 );
 
 new gcp.projects.IAMBinding(
-    "projectIamBindingSecretmanagerSecretAccessor", 
+    "project-iam-binding-secretmanager-secret-accessor", 
     {
         role: "roles/secretmanager.secretAccessor",
         project: projectId,
@@ -203,7 +203,7 @@ new gcp.projects.IAMBinding(
 );
 
 new gcp.projects.IAMBinding(
-    "projectIamBindingStorageAdmin", 
+    "project-iam-binding-storage-admin", 
     {
         role: "roles/storage.admin",
         project: projectId,
@@ -215,7 +215,7 @@ new gcp.projects.IAMBinding(
 
 
 new gcp.projects.IAMBinding(
-    "projectIamBindingCloudfunctionsAdmin", 
+    "project-iam-binding-cloudfunctions-admin", 
     {    
         role: "roles/cloudfunctions.admin",
         project: projectId,
@@ -226,7 +226,7 @@ new gcp.projects.IAMBinding(
 );
      
 new gcp.projects.IAMBinding(
-    "projectIamBindingPubsubEditor", 
+    "project-iam-binding-pubsub-editor", 
     {
         role: "roles/pubsub.editor",
         project: projectId,
@@ -237,7 +237,7 @@ new gcp.projects.IAMBinding(
 );    
     
 new gcp.projects.IAMBinding(
-    "projectIamBindingBigqueryDataEditor", 
+    "project-iam-binding-bigquery-data-editor", 
     {
         role: "roles/bigquery.dataEditor",
         project: projectId,
@@ -248,7 +248,7 @@ new gcp.projects.IAMBinding(
 );
 
 new gcp.projects.IAMBinding(
-    "projectIamBindingIamServiceAccountTokenCreator", 
+    "project-iam-binding-iam-service-account-token-creator", 
     {
         role: "roles/iam.serviceAccountTokenCreator",
         project: projectId,
@@ -264,7 +264,7 @@ new gcp.projects.IAMBinding(
 );
 
 new gcp.projects.IAMBinding(
-    "projectIamBindingDataflowAdmin", 
+    "project-iam-binding-dataflow-admin", 
     {
         role: "roles/dataflow.admin",
         project: projectId,
@@ -276,7 +276,7 @@ new gcp.projects.IAMBinding(
 );
 
 new gcp.projects.IAMBinding(
-    "projectIamBindingDataflowWorker", 
+    "project-iam-binding-dataflow-worker", 
     {
         role: "roles/dataflow.worker",
         project: projectId,
@@ -287,7 +287,7 @@ new gcp.projects.IAMBinding(
 );
 
 new gcp.projects.IAMBinding(
-    "projectIamBindingCloudFunctionsDeveloper", 
+    "project-iam-binding-cloudfunctions-developer", 
     {
         role: "roles/cloudfunctions.developer",
         project: projectId,
@@ -298,7 +298,7 @@ new gcp.projects.IAMBinding(
 );
 
 new gcp.projects.IAMBinding(
-    "projectIamBindingRunAdmin", 
+    "project-iam-binding-run-admin", 
     {
         role: "roles/run.admin",
         project: projectId,
@@ -310,7 +310,7 @@ new gcp.projects.IAMBinding(
 );
 
 new gcp.projects.IAMBinding(
-    "projectIamBindingRunArtifactRegistryReader", 
+    "project-iam-binding-run-artifactregistry-reader", 
     {
         role: "roles/artifactregistry.reader",
         project: projectId,
@@ -323,14 +323,14 @@ new gcp.projects.IAMBinding(
 // SECURITY
 
 const streamProcessorServiceAccountKey = new gcp.serviceaccount.Key(
-    "streamProcessorServiceAccountKey", 
+    "streamprocessor-service-account-key", 
     {
         serviceAccountId: streamProcessorServiceAccountEmail
     }
 );
 
 const streamProcessorServiceAccountSecret = new gcp.secretmanager.Secret(
-    "streamProcessorServiceAccountSecret", 
+    "streamprocessor-service-account-secret", 
     {
         secretId: "pulumi-credentials",
         replication: {
@@ -350,7 +350,7 @@ const streamProcessorServiceAccountSecret = new gcp.secretmanager.Secret(
 );
 
 new gcp.secretmanager.SecretVersion(
-    "streamProcessorServiceAccountSecretVersion",
+    "streamprocessor-service-account-secret-version",
     {
         secret: streamProcessorServiceAccountSecret.name,
         secretData: streamProcessorServiceAccountKey.privateKey.apply(
@@ -368,7 +368,7 @@ new gcp.secretmanager.SecretVersion(
 
 // kms encryption
 const streamProcessorKmsKeyRing = new gcp.kms.KeyRing(
-    "streamProcessorKmsKeyRing", 
+    "streamprocessor-kms-key-ring", 
     {
         name: "streamprocessor",
         location: "global",
@@ -383,7 +383,7 @@ const streamProcessorKmsKeyRing = new gcp.kms.KeyRing(
 );
 
 new gcp.kms.CryptoKey(
-    "streamProcessorKmsCryptoKey", 
+    "streamprocessor-kms-crypto-key", 
     {
         name: "pulumi",
         keyRing: streamProcessorKmsKeyRing.id,
