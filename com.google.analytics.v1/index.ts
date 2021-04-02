@@ -311,7 +311,7 @@ const comGoogleAnalyticsV1BigQueryDataset = new gcp.bigquery.Dataset(
         location: bigQueryLocation,
         labels: {
             stream: "com-google-analytics-v1",
-            component: "dataWareHouse",
+            component: "sink",
         },
     }
 );
