@@ -8,7 +8,7 @@ const infra = new pulumi.StackReference("infra");
 const deadLetterTopic = infra.requireOutput("deadLetterTopic").apply((topic: gcp.pubsub.Topic ) => {return topic.id});
 const registratorUrl = infra.requireOutput("registrator").apply((service: gcp.cloudrun.Service) => {return service.statuses[0].url});
 const backupTopic = infra.requireOutput("backupTopic").apply((topic: gcp.pubsub.Topic ) => {return topic.id});
-const stagingBucketName = infra.requireOutput("stagingBucketName").apply((bucket: gcp.storage.Bucket) => {return bucket.url + "/tmp"});
+const stagingBucketName = infra.requireOutput("stagingBucket").apply((bucket: gcp.storage.Bucket) => {return bucket.url + "/tmp"});
 
 // PULUMI CONFIG
 const config = new pulumi.Config();
@@ -55,7 +55,7 @@ let subjectSchemas: StreamProcessor.SubjectSchema[] = [
 */
 
 export const comGoogleAnalyticsV1CollectedTopic = new gcp.pubsub.Topic(
-    "comGoogleAnalyticsV1CollectedTopic", 
+    "com-google-analytics-v1-collected-topic", 
     {
         labels: {
             stream: "com-google-analytics-v1",
@@ -70,7 +70,7 @@ export const comGoogleAnalyticsV1CollectedTopic = new gcp.pubsub.Topic(
 );
 
 export const comGoogleAnalyticsV1CollectorService = new gcp.cloudrun.Service(
-    "comGoogleAnalyticsV1CollectorService",
+    "com-google-analytics-v1-collector-service",
     {
         location: `${region}`,
         template: {
@@ -121,7 +121,7 @@ export const comGoogleAnalyticsV1CollectorService = new gcp.cloudrun.Service(
 );
 
 new gcp.cloudrun.IamMember (
-    "comGoogleAnalyticsV1CollectorServiceIamPublicInvoker", 
+    "com-google-analytics-v1-collector-service-iam-public-invoker", 
     {
         project: comGoogleAnalyticsV1CollectorService.project,
         location: comGoogleAnalyticsV1CollectorService.location,
@@ -146,7 +146,7 @@ new gcp.cloudrun.IamMember (
 */
 
 export const comGoogleAnalyticsV1TransformedTopic = new gcp.pubsub.Topic(
-    "comGoogleAnalyticsV1TransformedTopic", 
+    "com-google-analytics-v1-transformed-topic", 
     {
         labels: {
             stream: "com-google-analytics-v1",
@@ -161,7 +161,7 @@ export const comGoogleAnalyticsV1TransformedTopic = new gcp.pubsub.Topic(
 );
 
 const comGoogleAnalyticsV1TransformerService = new gcp.cloudrun.Service(
-    "comGoogleAnalyticsV1TransformerService",
+    "com-google-analytics-v1-transformer-service",
     {
         location: `${region}`,
         template: {
@@ -198,10 +198,10 @@ const comGoogleAnalyticsV1TransformerService = new gcp.cloudrun.Service(
     }
 );
 
-export const comGoogleAnalyticsV1TransformerServiceUrl = comGoogleAnalyticsV1TransformerService.statuses[0].url;
+//export const comGoogleAnalyticsV1TransformerServiceUrl = comGoogleAnalyticsV1TransformerService.statuses[0].url;
 
 const comGoogleAnalyticsV1CollectedSubscription = new gcp.pubsub.Subscription(
-    "comGoogleAnalyticsV1CollectedSubscription",
+    "com-google-analytics-v1-collected-subscription",
     {
         topic: comGoogleAnalyticsV1CollectedTopic.id,
         ackDeadlineSeconds: 20,
@@ -236,7 +236,7 @@ const comGoogleAnalyticsV1CollectedSubscription = new gcp.pubsub.Subscription(
 */
 
 const comGoogleAnalyticsV1DeadLetterSubscription = new gcp.pubsub.Subscription(
-    "comGoogleAnalyticsV1DeadLetterSubscription", 
+    "com-google-analytics-v1-deadLetter-subscription", 
     {
         topic: deadLetterTopic,
         ackDeadlineSeconds: 20,
@@ -264,7 +264,7 @@ const comGoogleAnalyticsV1DeadLetterSubscription = new gcp.pubsub.Subscription(
 */
 
 export const comGoogleAnalyticsV1StreamerTopic = new gcp.pubsub.Topic(
-    "comGoogleAnalyticsV1StreamerTopic", 
+    "com-google-analytics-v1-streamer-topic", 
     {
         labels: {
             stream: "com-google-analytics-v1",
@@ -279,7 +279,7 @@ export const comGoogleAnalyticsV1StreamerTopic = new gcp.pubsub.Topic(
 );
 
 const comGoogleAnalyticsV1TransformedSubscription = new gcp.pubsub.Subscription(
-    "comGoogleAnalyticsV1TransformedSubscription", 
+    "com-google-analytics-v1-transformed-subscription", 
     {
         topic: comGoogleAnalyticsV1TransformedTopic.name,
         ackDeadlineSeconds: 20,
@@ -303,7 +303,7 @@ const comGoogleAnalyticsV1TransformedSubscription = new gcp.pubsub.Subscription(
 );
 
 const comGoogleAnalyticsV1BigQueryDataset = new gcp.bigquery.Dataset(
-    "comGoogleAnalyticsV1BigQueryDataset",
+    "com-google-analytics-v1-bigquery-dataset",
     {
         datasetId: "com_google_analytics_v1",
         friendlyName: "com.google.analytics.v1",
@@ -318,7 +318,7 @@ const comGoogleAnalyticsV1BigQueryDataset = new gcp.bigquery.Dataset(
 
 
 const comGoogleAnalyticsV1Dataflow = new gcp.dataflow.FlexTemplateJob(
-    "comGoogleAnalyticsV1Dataflow", 
+    "com-google-analytics-v1-dataflow", 
     {
         containerSpecGcsPath: "gs://streamprocessor-org/dataflow/templates/streamer/generic.json",
         onDelete: "drain",
