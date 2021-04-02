@@ -180,12 +180,12 @@ export const registrator = new gcp.cloudrun.Service(
 ******** START BIGQUERY ********
 */
 // Placeholder dataset for tables containing subjects, schemas, stacks and backups (TODO).
-const streamProcessorDataset = new gcp.bigquery.Dataset(
-    "dataset-streamprocessor",
+const infraBigQueryDataset = new gcp.bigquery.Dataset(
+    "infraBigQueryDataset",
     {
-        datasetId: "streamprocessor",
-        friendlyName: "streamprocessor",
-        description: "StreamProcessor admin dataset.",
+        datasetId: "infra",
+        friendlyName: "infra",
+        description: "StreamProcessor infra dataset.",
         location: bigQueryLocation,
         labels: {
             stream: "infra",
