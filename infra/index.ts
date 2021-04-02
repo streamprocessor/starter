@@ -17,22 +17,21 @@ const projectId = gcpConfig.require("project");
 // ARTIFACTS
 const artifactRegistryHostname = `${region}-docker.pkg.dev`;
 const registratorVersion = "0.2.1";
-const collectorVersion = "0.2.0";
 
 // VARIABLES
 const bigQueryLocation = "EU"; // <-- set region for BigQuery Dataset
-const collectorApiKeys = "12345"; //comma separated, ex. "123,456"
-const collectorAllowedOrigins = "https://myawesomesite.com"; //comma separated, ex. "https://www.streamprocessor.org"
+
 
 /*
 ********    END SETTINGS ********
 */
 
+
 /*
-* START BUCKETS
+******** START BUCKETS ********
 */
 
-const schemasBucket = new gcp.storage.Bucket(
+export const schemasBucket = new gcp.storage.Bucket(
     projectId + "-schemas",
     {
         name: projectId + "-schemas",
@@ -42,9 +41,9 @@ const schemasBucket = new gcp.storage.Bucket(
         //import: projectId + "-schemas"
     }
 );
-export const schemasBucketName = schemasBucket.url;
+//export const schemasBucketName = schemasBucket.url;
 
-const stagingBucket = new gcp.storage.Bucket(
+export const stagingBucket = new gcp.storage.Bucket(
     projectId + "-staging",
     {
         name: projectId + "-staging",
@@ -54,18 +53,17 @@ const stagingBucket = new gcp.storage.Bucket(
         //import: projectId + "-staging"
     }
 );
-export const stagingBucketName = stagingBucket.url;
+//export const stagingBucketName = stagingBucket.url;
 
 /*
 ******** START DEADLETTERS ********
 */
 export const deadLetterTopic = new gcp.pubsub.Topic(
-    "dead-letter", 
+    "deadLetterTopic", 
     {
         labels: {
-            program: "infra",
-            stream: "all",
-            component: "dead-letter",
+            stream: "infra",
+            component: "deadLetter",
         },
         messageStoragePolicy: {
             allowedPersistenceRegions: [
@@ -82,11 +80,10 @@ export const deadLetterTopic = new gcp.pubsub.Topic(
 */
 
 export const backupTopic = new gcp.pubsub.Topic(
-    "backup", 
+    "backupTopic", 
     {
         labels: {
-            program: "infra",
-            stream: "all",
+            stream: "infra",
             component: "backup",
         },
         messageStoragePolicy: {
@@ -103,8 +100,7 @@ const backupSubscription = new gcp.pubsub.Subscription(
         topic: backupTopic.name,
         ackDeadlineSeconds: 20,
         labels: {
-            program: "infra",
-            stream: "all",
+            stream: "infra",
             component: "backup",
         },
         deadLetterPolicy: {
@@ -127,107 +123,12 @@ const backupSubscription = new gcp.pubsub.Subscription(
 */
 
 
-
-/*
-******** START COLLECTOR ********
-*/
-
-export const collectedTopic = new gcp.pubsub.Topic(
-    "collected", 
-    {
-        labels: {
-            program: "infra",
-            stream: "all",
-            component: "collector",
-        },
-        messageStoragePolicy: {
-            allowedPersistenceRegions: [
-                gcpConfig.require("region")
-            ]
-        }
-    }
-);
-
-export const collectorService: gcp.cloudrun.Service = new gcp.cloudrun.Service(
-    "collector-service",
-    {
-        location: `${region}`,
-        template: {
-            spec: {
-                serviceAccountName: serviceAccountName,
-                containers: [
-                    {
-                        envs: [
-                            {
-                                name: "TOPIC",
-                                value: collectedTopic["name"],
-                            },
-                            {
-                                name: "API_KEYS",
-                                value: collectorApiKeys,
-                            },
-                            {
-                                name: "ALLOW_ORIGINS",
-                                value: collectorAllowedOrigins,
-                            }
-                        ],
-                        image: `${artifactRegistryHostname}/streamprocessor-org/collector/cloud-run-node:${collectorVersion}`,
-                    }
-                ],
-            },
-            metadata: {
-                annotations: {
-                    "autoscaling.knative.dev/maxScale": "10"
-                },
-                labels: {
-                    program: "infra",
-                    stream: "all",
-                    component: "collector",
-                },
-            }
-        },
-        traffics: [
-            {
-                latestRevision: true,
-                percent: 100,
-            }
-        ],
-    },
-    { 
-        dependsOn: [
-            collectedTopic
-        ] 
-    }
-);
-
-new gcp.cloudrun.IamMember (
-    "collector-service-iam-public-invoker", 
-    {
-        project: collectorService.project,
-        location: collectorService.location,
-        service: collectorService.name,
-        role: "roles/run.invoker",
-        member: "allUsers",
-    }, 
-    { 
-        dependsOn: [
-            collectorService
-        ]
-    }
-);
-
-/*
-******** END COLLECTOR ********
-*/
-
-
-
 /*
 ******** START REGISTRATOR ********
 */
 
 // Deploy registrator on cloud run. Modify max instances if needed (default 10).
-export const registryService = new gcp.cloudrun.Service(
+export const registrator = new gcp.cloudrun.Service(
     "registrator", 
     {
         location: `${region}`,
@@ -255,8 +156,7 @@ export const registryService = new gcp.cloudrun.Service(
                     "autoscaling.knative.dev/maxScale": "10"
                 },
                 labels: {
-                    program: "infra",
-                    stream: "all",
+                    stream: "infra",
                     component: "registrator",
                 },
             }
@@ -269,7 +169,7 @@ export const registryService = new gcp.cloudrun.Service(
         ],
     });
 
-export const registryServiceUrl = registryService.statuses[0].url;
+//export const registratorUrl = registrator.statuses[0].url;
 
 /*
 ******** END REGISTRATOR ********
@@ -288,8 +188,8 @@ const streamProcessorDataset = new gcp.bigquery.Dataset(
         description: "StreamProcessor admin dataset.",
         location: bigQueryLocation,
         labels: {
-            stream: "all",
-            component: "infra",
+            stream: "infra",
+            component: "dataWareHouse",
         },
     }
 );

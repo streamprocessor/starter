@@ -63,10 +63,10 @@ This step creates infrastructure that is shared across the pipelines, i.e. stagi
 
 ---
 
-## 4. Pipelines
-Here you find instructions for setting up different pipelines. Common for all pipelines are the following files:
+## 4. Streams
+Here you find instructions for setting up different streams. Common for all streams are the following files:
 
-* README.md - Instructions to set up the pipeline
+* README.md - Instructions to set up the stream
 * schemas/*.avsc - One or multiple Avro schema files used to serialize the messages.
 * cloud.pulumi.yaml - Cloud Build configuration file to enable CI/CD
 * index.ts - The program (typescript) declaring your infrastructure stack
@@ -76,7 +76,7 @@ Here you find instructions for setting up different pipelines. Common for all pi
 
 
 ### 4.1 com.google.analytics.v1 (Universal Analytics)
-This is a streaming pipeline for Google Analytics data (universal analytics).
+This is a stream for Google Analytics data (universal analytics).
 [Setup instructions](/com.google.analytics.v1/README.md)
 
 

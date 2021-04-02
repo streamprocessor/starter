@@ -5,11 +5,10 @@ import * as StreamProcessor from "../StreamProcessorHelpers"
 
 // INFRA STACK
 const infra = new pulumi.StackReference("infra");
-const collectedTopic = infra.requireOutput("collectedTopic").apply((topic: gcp.pubsub.Topic ) => {return topic.id});
 const deadLetterTopic = infra.requireOutput("deadLetterTopic").apply((topic: gcp.pubsub.Topic ) => {return topic.id});
-const registryServiceUrl = infra.requireOutput("registryServiceUrl");
-const backupTopic = infra.requireOutput("backupTopic").apply((topic: gcp.pubsub.Topic ) => {return topic.id});;
-const stagingBucketName = infra.requireOutput("stagingBucketName").apply(bucket => {return bucket + "/tmp"});
+const registratorUrl = infra.requireOutput("registrator").apply((service: gcp.cloudrun.Service) => {return service.statuses[0].url});
+const backupTopic = infra.requireOutput("backupTopic").apply((topic: gcp.pubsub.Topic ) => {return topic.id});
+const stagingBucketName = infra.requireOutput("stagingBucketName").apply((bucket: gcp.storage.Bucket) => {return bucket.url + "/tmp"});
 
 // PULUMI CONFIG
 const config = new pulumi.Config();
@@ -26,10 +25,13 @@ const projectId = gcpConfig.require("project");
 
 // ARTIFACTS
 const artifactRegistryHostname = `${region}-docker.pkg.dev`;
-const comGoogleAnalyticsV1EntityTransformerVersion = "0.1.5"; // <-- updates transformer version
+const comGoogleAnalyticsV1TransformerVersion = "0.1.5"; // <-- updates transformer version
+const collectorVersion = "0.2.0"; // <-- updates collector version
 
 //VARIABLES
 const bigQueryLocation = "EU"; // <-- set region for BigQuery Dataset
+const collectorApiKeys = "12345"; //comma separated, ex. "123,456"
+const collectorAllowedOrigins = "https://myawesomesite.com"; //comma separated, ex. "https://www.streamprocessor.org"
 
 // SCHEMA REFERENCES (dependent on order)
 
@@ -48,18 +50,16 @@ let subjectSchemas: StreamProcessor.SubjectSchema[] = [
 ******** END SETTINGS ********
 */
 
-
 /*
-******** START TRANSFORMER ********
+******** START COLLECTOR ********
 */
 
-export const transformedTopic = new gcp.pubsub.Topic(
-    "transformed", 
+export const comGoogleAnalyticsV1CollectedTopic = new gcp.pubsub.Topic(
+    "comGoogleAnalyticsV1CollectedTopic", 
     {
         labels: {
-            program: "infra",
-            stream: "all",
-            component: "transformer",
+            stream: "comGoogleAnalyticsV1",
+            component: "collector",
         },
         messageStoragePolicy: {
             allowedPersistenceRegions: [
@@ -69,8 +69,8 @@ export const transformedTopic = new gcp.pubsub.Topic(
     }
 );
 
-const comGoogleAnalyticsV1EntityTransformerService = new gcp.cloudrun.Service(
-    "transformer-com-google-analytics-v1-entity",
+export const comGoogleAnalyticsV1CollectorService = new gcp.cloudrun.Service(
+    "comGoogleAnalyticsV1CollectorService",
     {
         location: `${region}`,
         template: {
@@ -81,10 +81,18 @@ const comGoogleAnalyticsV1EntityTransformerService = new gcp.cloudrun.Service(
                         envs: [
                             {
                                 name: "TOPIC",
-                                value: transformedTopic["name"],
+                                value: comGoogleAnalyticsV1CollectedTopic["name"],
+                            },
+                            {
+                                name: "API_KEYS",
+                                value: collectorApiKeys,
+                            },
+                            {
+                                name: "ALLOW_ORIGINS",
+                                value: collectorAllowedOrigins,
                             }
                         ],
-                        image: `${artifactRegistryHostname}/streamprocessor-org/transformer/com-google-analytics-v1:${comGoogleAnalyticsV1EntityTransformerVersion}`,
+                        image: `${artifactRegistryHostname}/streamprocessor-org/collector/cloud-run-node:${collectorVersion}`,
                     }
                 ],
             },
@@ -93,7 +101,90 @@ const comGoogleAnalyticsV1EntityTransformerService = new gcp.cloudrun.Service(
                     "autoscaling.knative.dev/maxScale": "10"
                 },
                 labels: {
-                    stream: "com-google-analytics-v1",
+                    stream: "comGoogleAnalyticsV1",
+                    component: "collector",
+                },
+            }
+        },
+        traffics: [
+            {
+                latestRevision: true,
+                percent: 100,
+            }
+        ],
+    },
+    { 
+        dependsOn: [
+            comGoogleAnalyticsV1CollectedTopic
+        ] 
+    }
+);
+
+new gcp.cloudrun.IamMember (
+    "comGoogleAnalyticsV1CollectorServiceIamPublicInvoker", 
+    {
+        project: comGoogleAnalyticsV1CollectorService.project,
+        location: comGoogleAnalyticsV1CollectorService.location,
+        service: comGoogleAnalyticsV1CollectorService.name,
+        role: "roles/run.invoker",
+        member: "allUsers",
+    }, 
+    { 
+        dependsOn: [
+            comGoogleAnalyticsV1CollectorService
+        ]
+    }
+);
+
+/*
+******** END COLLECTOR ********
+*/
+
+
+/*
+******** START TRANSFORMER ********
+*/
+
+export const comGoogleAnalyticsV1TransformedTopic = new gcp.pubsub.Topic(
+    "comGoogleAnalyticsV1TransformedTopic", 
+    {
+        labels: {
+            stream: "comGoogleAnalyticsV1",
+            component: "transformer",
+        },
+        messageStoragePolicy: {
+            allowedPersistenceRegions: [
+                gcpConfig.require("region")
+            ]
+        }
+    }
+);
+
+const comGoogleAnalyticsV1TransformerService = new gcp.cloudrun.Service(
+    "comGoogleAnalyticsV1TransformerService",
+    {
+        location: `${region}`,
+        template: {
+            spec: {
+                serviceAccountName: serviceAccountName,
+                containers: [
+                    {
+                        envs: [
+                            {
+                                name: "TOPIC",
+                                value: comGoogleAnalyticsV1TransformedTopic["name"],
+                            }
+                        ],
+                        image: `${artifactRegistryHostname}/streamprocessor-org/transformer/com-google-analytics-v1:${comGoogleAnalyticsV1TransformerVersion}`,
+                    }
+                ],
+            },
+            metadata: {
+                annotations: {
+                    "autoscaling.knative.dev/maxScale": "10"
+                },
+                labels: {
+                    stream: "comGoogleAnalyticsV1",
                     component: "transformer",
                 },
             }
@@ -107,20 +198,20 @@ const comGoogleAnalyticsV1EntityTransformerService = new gcp.cloudrun.Service(
     }
 );
 
-export const comGoogleAnalyticsV1EntityTransformerServiceUrl = comGoogleAnalyticsV1EntityTransformerService.statuses[0].url;
+export const comGoogleAnalyticsV1TransformerServiceUrl = comGoogleAnalyticsV1TransformerService.statuses[0].url;
 
-const comGoogleAnalyticsV1EntityCollectedSubscription = new gcp.pubsub.Subscription(
-    "com-google-analytics-v1-entity-transformer",
+const comGoogleAnalyticsV1CollectedSubscription = new gcp.pubsub.Subscription(
+    "comGoogleAnalyticsV1CollectedSubscription",
     {
-        topic: collectedTopic,
+        topic: comGoogleAnalyticsV1CollectedTopic,
         ackDeadlineSeconds: 20,
         filter: "hasPrefix(attributes.subject, \"com.google.analytics.v1\")",
         labels: {
-            stream: "com-google-analytics-v1",
+            stream: "comGoogleAnalyticsV1",
             component: "transformer",
         },
         pushConfig: {
-            pushEndpoint: comGoogleAnalyticsV1EntityTransformerServiceUrl,
+            pushEndpoint: comGoogleAnalyticsV1TransformerService.statuses[0].url,//comGoogleAnalyticsV1TransformerServiceUrl,
             attributes: {
                 "x-goog-version": "v1",
             },
@@ -134,7 +225,7 @@ const comGoogleAnalyticsV1EntityCollectedSubscription = new gcp.pubsub.Subscript
     },
     {
         dependsOn: [
-            comGoogleAnalyticsV1EntityTransformerService
+            comGoogleAnalyticsV1TransformerService
         ]
     }
 );
@@ -173,12 +264,11 @@ const comGoogleAnalyticsV1DeadLetterSubscription = new gcp.pubsub.Subscription(
 ******** START STREAMER ********
 */
 
-export const streamerTopic = new gcp.pubsub.Topic(
-    "streamed", 
+export const comGoogleAnalyticsV1StreamerTopic = new gcp.pubsub.Topic(
+    "comGoogleAnalyticsV1StreamerTopic", 
     {
         labels: {
-            program: "infra",
-            stream: "all",
+            stream: "comGoogleAnalyticsV1",
             component: "streamer",
         },
         messageStoragePolicy: {
@@ -189,15 +279,14 @@ export const streamerTopic = new gcp.pubsub.Topic(
     }
 );
 
-const transformedSubscription = new gcp.pubsub.Subscription(
-    "transformedToStreamer", 
+const comGoogleAnalyticsV1TransformedSubscription = new gcp.pubsub.Subscription(
+    "comGoogleAnalyticsV1TransformedSubscription", 
     {
-        topic: transformedTopic.name,
+        topic: comGoogleAnalyticsV1TransformedTopic.name,
         ackDeadlineSeconds: 20,
         labels: {
-            program: "infra",
-            stream: "all",
-            component: "serializer",
+            stream: "comGoogleAnalyticsV1",
+            component: "streamer",
         },
         deadLetterPolicy: {
             deadLetterTopic: deadLetterTopic,
@@ -214,33 +303,33 @@ const transformedSubscription = new gcp.pubsub.Subscription(
     }
 );
 
-const comGoogleAnalyticsV1EntityDataset = new gcp.bigquery.Dataset(
-    "dataset-com-google-analytics-v1-entity",
+const comGoogleAnalyticsV1BigQueryDataset = new gcp.bigquery.Dataset(
+    "comGoogleAnalyticsV1BigQueryDataset",
     {
         datasetId: "com_google_analytics_v1",
         friendlyName: "com.google.analytics.v1",
         description: "Google Analytics v1 dataset.",
         location: bigQueryLocation,
         labels: {
-            stream: "com-google-analytics-v1",
-            component: "streamer",
+            stream: "comGoogleAnalyticsV1",
+            component: "dataWareHouse",
         },
     }
 );
 
 
 const comGoogleAnalyticsV1Dataflow = new gcp.dataflow.FlexTemplateJob(
-    "dataflow-com-google-analytics-v1", 
+    "comGoogleAnalyticsV1Dataflow", 
     {
         containerSpecGcsPath: "gs://streamprocessor-org/dataflow/templates/streamer/generic.json",
         onDelete: "drain",
         region: region,        
         parameters: {
-            inputSubscription: transformedSubscription.path,
-            registratorHost: registryServiceUrl,
-            outputTopic: streamerTopic.id,
+            inputSubscription: comGoogleAnalyticsV1TransformedSubscription.path,
+            registratorHost: registratorUrl,
+            outputTopic: comGoogleAnalyticsV1StreamerTopic.id,
             backupTopic: backupTopic,
-            bigQueryDataset: comGoogleAnalyticsV1EntityDataset.datasetId,
+            bigQueryDataset: comGoogleAnalyticsV1BigQueryDataset.datasetId,
             tempLocation: stagingBucketName,
             numWorkers: 1,
             maxNumWorkers: 1,
@@ -250,11 +339,9 @@ const comGoogleAnalyticsV1Dataflow = new gcp.dataflow.FlexTemplateJob(
     }, 
     {
         dependsOn: [ 
-            comGoogleAnalyticsV1EntityDataset,
-            //registryService,
-            streamerTopic,
-            //backupTopic,
-            transformedSubscription
+            comGoogleAnalyticsV1BigQueryDataset,
+            comGoogleAnalyticsV1StreamerTopic,
+            comGoogleAnalyticsV1TransformedSubscription
         ]
     });
 
@@ -269,7 +356,7 @@ const comGoogleAnalyticsV1Dataflow = new gcp.dataflow.FlexTemplateJob(
 */
 
 // update schemas in the schema registry and then in the bigquery tables
-pulumi.all([registryServiceUrl, comGoogleAnalyticsV1EntityDataset.datasetId])
+pulumi.all([registratorUrl, comGoogleAnalyticsV1BigQueryDataset.datasetId])
     .apply(async ([hostname, datasetId]: string[]) => {
 
         // Post schemas asynchronously but in order
@@ -307,12 +394,12 @@ pulumi.all([registryServiceUrl, comGoogleAnalyticsV1EntityDataset.datasetId])
                 },
                 { 
                     dependsOn: [ 
-                        comGoogleAnalyticsV1EntityDataset
+                        comGoogleAnalyticsV1BigQueryDataset
                     ],
                 });
             
             }catch(err){
-                console.error(err);
+                console.error(err.message);
                 process.exitCode = 1;
             }   
         }));

@@ -43,8 +43,7 @@ Make changes to settings in infra/index.ts in your IDE (see below)
 
 /*** START SETTINGS ***/
 const bigQueryLocation = "EU"; // set region for BigQuery Dataset
-const collectorApiKeys = "12345"; // comma separated list of api keys
-const collectorAllowedOrigins = "https://myawesomesite.com"; // comma separated list of allowed origins
+
 /*** END SETTINGS ***/
  ```
 

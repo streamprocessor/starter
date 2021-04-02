@@ -44,6 +44,8 @@ git checkout -b pipeline/com.google.analytics.v1
 
 //VARIABLES
 const bigQueryLocation = "EU"; // <-- set region for BigQuery Dataset
+const collectorApiKeys = "12345"; //comma separated, ex. "123,456"
+const collectorAllowedOrigins = "https://myawesomesite.com"; //comma separated, ex. "https://www.streamprocessor.org"
 
 // SCHEMA REFERENCES (dependent on order)
 // add subject schemas for the properties you stream.
