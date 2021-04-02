@@ -9,7 +9,7 @@ const collectedTopic = infra.requireOutput("collectedTopic").apply((topic: gcp.p
 const deadLetterTopic = infra.requireOutput("deadLetterTopic").apply((topic: gcp.pubsub.Topic ) => {return topic.id});
 const registryServiceUrl = infra.requireOutput("registryServiceUrl");
 const backupTopic = infra.requireOutput("backupTopic").apply((topic: gcp.pubsub.Topic ) => {return topic.id});;
-const stagingBucketName = infra.requireOutput("stagingBucketName");
+const stagingBucketName = infra.requireOutput("stagingBucketName").apply(bucket => {return bucket + "/tmp"});
 
 // PULUMI CONFIG
 const config = new pulumi.Config();
