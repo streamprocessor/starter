@@ -59,7 +59,7 @@ export const stagingBucket = new gcp.storage.Bucket(
 ******** START DEADLETTERS ********
 */
 export const deadLetterTopic = new gcp.pubsub.Topic(
-    "deadLetterTopic", 
+    "dead-letter-topic", 
     {
         labels: {
             stream: "infra",
@@ -80,7 +80,7 @@ export const deadLetterTopic = new gcp.pubsub.Topic(
 */
 
 export const backupTopic = new gcp.pubsub.Topic(
-    "backupTopic", 
+    "backup-topic", 
     {
         labels: {
             stream: "infra",
@@ -95,7 +95,7 @@ export const backupTopic = new gcp.pubsub.Topic(
 );
 
 const backupSubscription = new gcp.pubsub.Subscription(
-    "backupSubscription", 
+    "backup-subscription", 
     {
         topic: backupTopic.name,
         ackDeadlineSeconds: 20,
@@ -181,7 +181,7 @@ export const registrator = new gcp.cloudrun.Service(
 */
 // Placeholder dataset for tables containing subjects, schemas, stacks and backups (TODO).
 const infraBigQueryDataset = new gcp.bigquery.Dataset(
-    "infraBigQueryDataset",
+    "infra-big-query-dataset",
     {
         datasetId: "infra",
         friendlyName: "infra",
