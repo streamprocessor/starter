@@ -71,7 +71,5 @@ Now you should have the following shared resources set up in your project.
 3. Pubsub topic for dead letter messages
 4. Pubsub topic for backup of messages
 5. Pubsub backup subscription of messages
-6. Cloud Run service to collect messages
-7. Pubsub topic for collected messages
-8. Cloud run service acting as schema registry
-9. BigQuery dataset for infra related data (schemas, subjects, stacks, backups, etc.)
+6. Cloud run service acting as schema registry
+7. BigQuery dataset for infra related data (schemas, subjects, stacks, backups, etc.)
