@@ -207,3 +207,10 @@ function() {
 ```
 2. Set a field in the GA Settings variable (in GTM) with field name "customTask" and value {{customTask}}
 3. Create version and publish it in GTM
+
+# 2 Remember
+## 2.1 Dataflow
+Dataflow is very cost efficient to process large data volumes, but it requires at minimum 1 instance running. Hence it will incur cost also when being idle and isn't suitable for small data volumes. Make sure to drain it if not running in production to avoid generating unecessary/unexpected cost.
+
+## 2.2 Scalability
+Current configuration has limits on the number of instances used to collect, transform and process data to avoid unexpected cost. Remember to tune these settings if you expect bigger load of data (> 300 000 hits / day).
